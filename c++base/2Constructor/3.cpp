@@ -1,7 +1,7 @@
 /**
  * @file 2.cpp
  * @author liudeda
- * @brief无参构造函数和有参构造函数 拷贝构造 初始化列表的形式
+ * @brief浅拷贝构造函数演示
  * @version 0.1
  * @date 2024-05-08
  *
