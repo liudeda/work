@@ -40,6 +40,9 @@ int main()
     std::cout << person << std::endl; // 输出: Name: Alice, Age: 30
     // 等价于
     operator<<(std::cout, person) << std::endl; // 输出: Name: Alice, Age: 30
+    std::ostream &os  = std::cout <<person;
+    os << std::endl;
+    
     // 重载<<操作符的返回值是std::ostream&，所以可以支持连续输出
     // 重载运算符本质上是函数重载，只是函数名被重载运算符代替了
     // 根据不同的参数类型，编译器会自动调用对应的重载函数

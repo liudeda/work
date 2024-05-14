@@ -4,7 +4,7 @@ project(MyProject)
 set(SOURCE_SELECTION 1.1)
 
 if(SOURCE_SELECTION EQUAL 1.1)#用法：cmake -DSOURCE_SELECTION=0
-    add_executable(MyProject 2.cpp)
+    add_executable(MyProject 4.cpp)
 elseif(SOURCE_SELECTION EQUAL 2)
     add_executable(MyProject 2.cpp)
 else()
