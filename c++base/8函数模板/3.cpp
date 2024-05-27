@@ -1,0 +1,38 @@
+/**
+ * @file 3.cpp
+ * @author liudeda (you@domain.com)
+ * @brief 
+ * @version 0.1
+ * @date 2024-05-22
+ * 类的 模版
+ * @copyright Copyright (c) 2024
+ * 
+ */
+#include <iostream>
+#include <string>
+template <typename T>
+class Operator
+{
+public:
+     T add(T a, T b);
+     T sub(T a, T b);
+};
+template <typename T>
+T Operator<T>::add(T a, T b)
+{
+     return a + b;
+}
+template <typename T>
+T Operator<T>::sub(T a, T b)
+{
+     return a - b;
+}
+int main()
+{
+     Operator<int> op;
+     Operator<double> op2;
+     std::cout << op.add(1, 2) << std::endl;
+     std::cout << op.sub(1, 2) << std::endl;
+     std::cout << op2.add(1.9, 2.2) << std::endl;
+     std::cout << op2.sub(1.9, 2.2) << std::endl;
+}
