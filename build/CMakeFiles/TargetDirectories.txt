@@ -1,0 +1,3 @@
+C:/work/build/CMakeFiles/MyProject.dir
+C:/work/build/CMakeFiles/edit_cache.dir
+C:/work/build/CMakeFiles/rebuild_cache.dir
