@@ -65,7 +65,8 @@
         "xmemory": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "functional": "cpp"
     },
     "cmake.sourceDirectory": "C:/work/c++base"
 }
