@@ -29,7 +29,7 @@ int main()
     shape1 = &circle;
     shape1->draw();
     
-    shape1 = &rectangle;
+    shape1 = &rectangle ;  
     shape1->draw();
 
     return 0;

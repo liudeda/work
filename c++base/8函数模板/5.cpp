@@ -3,16 +3,17 @@
 
 using namespace std;
 
-template<typename T, int N>
+template <typename T, int N>
 void func()
 {
     T array[N] = {0};
-    for(int i = 0; i < N; i++)
+    for (int i = 0; i < N; i++)
     {
         array[i] = i + 1;
-        cout<<array[i]<<" ";
+        cout << array[i] << " ";
+        array[i] = array[i] * 2;
     }
-    cout<<endl;
+    cout << endl;
 }
 
 int main(int argc, char *argv[])

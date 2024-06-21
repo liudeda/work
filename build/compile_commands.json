@@ -1,8 +1,0 @@
-[
-{
-  "directory": "C:/work/build",
-  "command": "C:\\mingw64\\bin\\g++.exe   -g -o CMakeFiles\\MyProject.dir\\1992.cpp.obj -c C:\\work\\c++base\\1992.cpp",
-  "file": "C:/work/c++base/1992.cpp",
-  "output": "CMakeFiles/MyProject.dir/1992.cpp.obj"
-}
-]
