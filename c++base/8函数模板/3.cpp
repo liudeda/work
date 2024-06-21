@@ -5,6 +5,7 @@
  * @version 0.1
  * @date 2024-05-22
  * 类的 模版
+ * 类模板可以定义多个类型的参数，比如：
  * @copyright Copyright (c) 2024
  * 
  */
