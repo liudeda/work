@@ -45,7 +45,6 @@ int main()
     do
     {
         wm.show_menu();
-   
         cin >> choice;
         switch (choice)
         {
@@ -58,7 +57,6 @@ int main()
         case 3:
             break;
         case 4:
-
             break;
         case 5:
             break;

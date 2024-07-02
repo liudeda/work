@@ -2,17 +2,17 @@
 
 Worker::Worker(int id, string name, int deptId) : m_Id(id), m_Name(name), m_DeptId(deptId)
 {
-    
+
     cout << "you can Worker object created" << endl;
 }
 
-Worker::~Worker(){
+Worker::~Worker()
+{
     cout << "Worker object destroyed" << endl;
 }
 void Worker::showInfo()
 {
-    cout << "???????"                         << m_Id 
-     << "\t???????:" << m_Name
-         << "\t??λ:" << m_DeptId
-         << "\t??λ:" << this->getDeptName()   << endl;
+    cout << "职工编号" << m_Id
+         << "\t职工编号" << m_Name
+         << "\t部门编号" << m_DeptId << endl;
 }
