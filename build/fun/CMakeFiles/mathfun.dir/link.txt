@@ -1,2 +1,0 @@
-C:\mingw64\bin\ar.exe qc libmathfun.a CMakeFiles/mathfun.dir/fun.c.obj
-C:\mingw64\bin\ranlib.exe libmathfun.a
