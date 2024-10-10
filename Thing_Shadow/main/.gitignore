@@ -1,0 +1,3 @@
+# 忽略除 bin 文件之外的所有内容
+/build/*
+!/build/*.bin
