@@ -1,6 +1,7 @@
 {
     "C_Cpp.clang_format_style": "Visual Studio",
     "files.associations": {
+<<<<<<< HEAD
         "iostream": "cpp",
         "iosfwd": "cpp",
         "xmemory": "cpp",
@@ -51,4 +52,8 @@
         "xutility": "cpp"
     },
     "cmake.sourceDirectory": "C:/work/c++base/01class"
+=======
+        "iostream": "cpp"
+    }
+>>>>>>> 5ce6280b661df4e460b04a6ba51c427d79e192ee
 }
