@@ -45,9 +45,7 @@ Person::~Person()
 }
 void Person::setName(char *name)
 {
-    // this->name = name
     strcpy(this->name, name);
-
 }
 char *Person::getName()
 {
@@ -59,12 +57,11 @@ void Person::print()
 }
 int main()
 {
-    cout << "Hello World" << __FILE__ << endl;
+    cout << "Hello World Person class size: " << sizeof(Person) << endl;
     // 创建对象
     {
         Person p2("zhangsan");
         p2.print();
-
         Person p3(p2); // 调用拷贝构造函数
         p3.print();
         printf("p2.name address: %p\n", p2.name);
