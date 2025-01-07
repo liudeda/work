@@ -1,0 +1,6 @@
+C:/work/cmake/C-hello-headerslib/build/CMakeFiles/hello_headers.dir
+C:/work/cmake/C-hello-headerslib/build/CMakeFiles/edit_cache.dir
+C:/work/cmake/C-hello-headerslib/build/CMakeFiles/rebuild_cache.dir
+C:/work/cmake/C-hello-headerslib/build/hellolibdir/CMakeFiles/hellolib.dir
+C:/work/cmake/C-hello-headerslib/build/hellolibdir/CMakeFiles/edit_cache.dir
+C:/work/cmake/C-hello-headerslib/build/hellolibdir/CMakeFiles/rebuild_cache.dir

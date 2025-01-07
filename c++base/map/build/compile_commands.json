@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/work/c++base/map/build",
+  "command": "C:\\mingw64\\bin\\g++.exe   -g -o CMakeFiles\\MyProject.dir\\1.cpp.obj -c C:\\work\\c++base\\map\\1.cpp",
+  "file": "C:/work/c++base/map/1.cpp",
+  "output": "CMakeFiles/MyProject.dir/1.cpp.obj"
+}
+]

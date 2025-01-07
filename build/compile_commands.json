@@ -1,0 +1,14 @@
+[
+{
+  "directory": "C:/work/build",
+  "command": "C:\\mingw64\\bin\\g++.exe  @CMakeFiles/MyProject.dir/includes_CXX.rsp -g -o CMakeFiles\\MyProject.dir\\3.cpp.obj -c C:\\work\\c++base\\01class\\3.cpp",
+  "file": "C:/work/c++base/01class/3.cpp",
+  "output": "CMakeFiles/MyProject.dir/3.cpp.obj"
+},
+{
+  "directory": "C:/work/build/fun",
+  "command": "C:\\mingw64\\bin\\gcc.exe   -g -o CMakeFiles\\mathfun.dir\\fun.c.obj -c C:\\work\\c++base\\01class\\fun\\fun.c",
+  "file": "C:/work/c++base/01class/fun/fun.c",
+  "output": "fun/CMakeFiles/mathfun.dir/fun.c.obj"
+}
+]

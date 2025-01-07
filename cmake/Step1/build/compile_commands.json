@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/Code/cmake_240913/Step1/build",
+  "command": "C:\\mingw64\\bin\\g++.exe   -g -std=gnu++11 -o CMakeFiles\\test.dir\\tutorial.cpp.obj -c C:\\Code\\cmake_240913\\Step1\\tutorial.cpp",
+  "file": "C:/Code/cmake_240913/Step1/tutorial.cpp",
+  "output": "CMakeFiles/test.dir/tutorial.cpp.obj"
+}
+]

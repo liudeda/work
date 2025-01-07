@@ -17,11 +17,7 @@ public:
         cout << "name: " << this->name << endl;
     }
 
-<<<<<<< HEAD
-// private:
-=======
 private:
->>>>>>> 5ce6280b661df4e460b04a6ba51c427d79e192ee
     string name;
 };
 int main()
