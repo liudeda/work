@@ -1,0 +1,14 @@
+[
+{
+  "directory": "C:/work/cmake/B-hello-headers/build",
+  "command": "C:\\mingw64\\bin\\g++.exe  @CMakeFiles/hello_headers.dir/includes_CXX.rsp -g -o CMakeFiles\\hello_headers.dir\\src\\Hello.cpp.obj -c C:\\work\\cmake\\B-hello-headers\\src\\Hello.cpp",
+  "file": "C:/work/cmake/B-hello-headers/src/Hello.cpp",
+  "output": "CMakeFiles/hello_headers.dir/src/Hello.cpp.obj"
+},
+{
+  "directory": "C:/work/cmake/B-hello-headers/build",
+  "command": "C:\\mingw64\\bin\\g++.exe  @CMakeFiles/hello_headers.dir/includes_CXX.rsp -g -o CMakeFiles\\hello_headers.dir\\src\\main.cpp.obj -c C:\\work\\cmake\\B-hello-headers\\src\\main.cpp",
+  "file": "C:/work/cmake/B-hello-headers/src/main.cpp",
+  "output": "CMakeFiles/hello_headers.dir/src/main.cpp.obj"
+}
+]

@@ -22,7 +22,8 @@ private:
 };
 int main()
 {
-    cout << "Hello World!" << endl;
+    cout << "Hello World! Person class size " << sizeof(Person) 
+    <<"name size "<< sizeof(Person::name)<< endl;
     // 创建对象
     Person p1;
     p1.setName("zhangsan");

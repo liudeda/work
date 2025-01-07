@@ -1,0 +1,20 @@
+[
+{
+  "directory": "C:/work/cmake/Step3/build",
+  "command": "C:\\mingw64\\bin\\g++.exe  @CMakeFiles/Tutorial.dir/includes_CXX.rsp -g -std=gnu++11 -o CMakeFiles\\Tutorial.dir\\tutorial.cxx.obj -c C:\\work\\cmake\\Step3\\tutorial.cxx",
+  "file": "C:/work/cmake/Step3/tutorial.cxx",
+  "output": "CMakeFiles/Tutorial.dir/tutorial.cxx.obj"
+},
+{
+  "directory": "C:/work/cmake/Step3/build/MathFunctions",
+  "command": "C:\\mingw64\\bin\\g++.exe   -g -std=gnu++11 -o CMakeFiles\\SqrtLibrary.dir\\mysqrt.cxx.obj -c C:\\work\\cmake\\Step3\\MathFunctions\\mysqrt.cxx",
+  "file": "C:/work/cmake/Step3/MathFunctions/mysqrt.cxx",
+  "output": "MathFunctions/CMakeFiles/SqrtLibrary.dir/mysqrt.cxx.obj"
+},
+{
+  "directory": "C:/work/cmake/Step3/build/MathFunctions",
+  "command": "C:\\mingw64\\bin\\g++.exe -DUSE_MYMATH  -g -std=gnu++11 -o CMakeFiles\\MathFunctions.dir\\MathFunctions.cxx.obj -c C:\\work\\cmake\\Step3\\MathFunctions\\MathFunctions.cxx",
+  "file": "C:/work/cmake/Step3/MathFunctions/MathFunctions.cxx",
+  "output": "MathFunctions/CMakeFiles/MathFunctions.dir/MathFunctions.cxx.obj"
+}
+]

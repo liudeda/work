@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+C:/work/Thing_Shadow/build/CMakeFiles/bootloader
+C:/work/Thing_Shadow/build/CMakeFiles/bootloader.rule
+C:/work/Thing_Shadow/build/CMakeFiles/bootloader-complete.rule
+C:/work/Thing_Shadow/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+C:/work/Thing_Shadow/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+C:/work/Thing_Shadow/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+C:/work/Thing_Shadow/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+C:/work/Thing_Shadow/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+C:/work/Thing_Shadow/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+C:/work/Thing_Shadow/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule

@@ -1,0 +1,3 @@
+C:/work/cmake/B-hello-headers/build/CMakeFiles/hello_headers.dir
+C:/work/cmake/B-hello-headers/build/CMakeFiles/edit_cache.dir
+C:/work/cmake/B-hello-headers/build/CMakeFiles/rebuild_cache.dir
