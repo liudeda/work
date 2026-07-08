@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C++ 类模板（下）· 偏特化 · 非类型参数 · 智能指针 · 引导式互动教程</title>
+<style>
+:root{
+  --bg:#0f1117;
+  --bg-soft:#161923;
+  --bg-card:#1b1f2b;
+  --bg-code:#0b0d13;
+  --border:#2a2f3d;
+  --text:#e7ebf3;
+  --text-dim:#9aa3b5;
+  --text-mute:#6b7385;
+  --brand:#5b8cff;
+  --brand-2:#7c5cff;
+  --accent:#22d3a6;
+  --warn:#ffb454;
+  --danger:#ff6b6b;
+  --ok:#3ddc84;
+  --radius:14px;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,"JetBrains Mono","Fira Code",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);
+  line-height:1.75;font-size:16px;-webkit-font-smoothing:antialiased;
+}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ---------- 顶部进度条 ---------- */
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0;z-index:1000;
+  background:linear-gradient(90deg,var(--brand),var(--brand-2),var(--accent));
+  transition:width .12s ease-out;box-shadow:0 0 12px rgba(91,140,255,.6)}
+
+/* ---------- 布局 ---------- */
+.layout{display:flex;max-width:1280px;margin:0 auto;gap:0}
+#sidebar{
+  position:sticky;top:0;height:100vh;width:300px;flex:0 0 300px;
+  background:var(--bg-soft);border-right:1px solid var(--border);
+  padding:24px 18px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;
+}
+#sidebar .brand{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+#sidebar .brand .logo{width:36px;height:36px;border-radius:10px;flex:0 0 36px;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  display:grid;place-items:center;font-weight:800;color:#fff;font-size:15px}
+#sidebar .brand h1{font-size:15px;margin:0;line-height:1.3}
+#sidebar .brand p{font-size:12px;margin:0;color:var(--text-mute)}
+.nav-progress{font-size:12px;color:var(--text-dim);margin:10px 2px 4px}
+.nav-progress b{color:var(--accent)}
+#toc{list-style:none;padding:0;margin:6px 0 0}
+#toc li{margin:1px 0}
+#toc a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;
+  color:var(--text-dim);font-size:14px;transition:.15s;border:1px solid transparent}
+#toc a:hover{background:var(--bg-card);color:var(--text);text-decoration:none}
+#toc a.active{background:linear-gradient(135deg,rgba(91,140,255,.16),rgba(124,92,255,.12));
+  color:#fff;border-color:rgba(91,140,255,.35)}
+#toc a .dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex:0 0 8px;transition:.15s}
+#toc a.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+#toc a.done .dot{background:var(--ok)}
+.sidebar-foot{margin-top:auto;padding-top:14px;font-size:11px;color:var(--text-mute);border-top:1px solid var(--border)}
+
+main{flex:1;min-width:0;padding:0 clamp(20px,5vw,64px) 120px}
+.hero{padding:64px 0 30px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.hero .eyebrow{display:inline-block;font-size:13px;font-weight:600;letter-spacing:.5px;
+  color:var(--brand);background:rgba(91,140,255,.12);padding:5px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.15;margin:0 0 14px;
+  background:linear-gradient(120deg,#fff 20%,#9db6ff 60%,#b79bff);-webkit-background-clip:text;
+  background-clip:text;-webkit-text-fill-color:transparent}
+.hero p.lead{font-size:18px;color:var(--text-dim);max-width:70ch;margin:0 0 22px}
+.hero .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.pill{font-size:13px;color:var(--text-dim);background:var(--bg-card);border:1px solid var(--border);
+  padding:7px 14px;border-radius:999px}
+.pill b{color:var(--text)}
+
+section.chapter{padding:44px 0 8px;border-bottom:1px solid var(--border);scroll-margin-top:20px}
+section.chapter:last-of-type{border-bottom:none}
+.chapter > h2{font-size:27px;margin:0 0 6px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.chapter > h2 .num{font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  width:34px;height:34px;border-radius:10px;display:inline-grid;place-items:center;flex:0 0 34px}
+.chapter .sub{color:var(--text-mute);font-size:14px;margin:0 0 22px 46px}
+h3{font-size:19px;margin:30px 0 10px;color:#fff}
+h4{font-size:16px;margin:22px 0 8px;color:#dfe5f2}
+p{margin:12px 0}
+ul,ol{padding-left:22px}
+li{margin:6px 0}
+strong{color:#fff}
+code.inline{font-family:var(--mono);font-size:.9em;background:var(--bg-card);
+  border:1px solid var(--border);padding:2px 6px;border-radius:6px;color:#ffd08a}
+
+.callout{border-radius:var(--radius);padding:16px 18px;margin:20px 0;border:1px solid var(--border);
+  background:var(--bg-card);display:flex;gap:14px;align-items:flex-start}
+.callout .ic{font-size:20px;flex:0 0 auto;line-height:1.5}
+.callout .body{flex:1}
+.callout .body > :first-child{margin-top:0}
+.callout .body > :last-child{margin-bottom:0}
+.callout.tip{border-color:rgba(34,211,166,.4);background:rgba(34,211,166,.07)}
+.callout.info{border-color:rgba(91,140,255,.4);background:rgba(91,140,255,.07)}
+.callout.warn{border-color:rgba(255,180,84,.4);background:rgba(255,180,84,.07)}
+.callout.danger{border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.07)}
+.callout .t{font-weight:700;color:#fff;margin-bottom:2px}
+
+.codeblock{background:var(--bg-code);border:1px solid var(--border);border-radius:var(--radius);
+  margin:18px 0;overflow:hidden;box-shadow:var(--shadow)}
+.codeblock .cb-head{display:flex;align-items:center;justify-content:space-between;
+  padding:9px 14px;background:#12141c;border-bottom:1px solid var(--border)}
+.cb-head .dots{display:flex;gap:6px}
+.cb-head .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.cb-head .dots i:nth-child(1){background:#ff5f56}
+.cb-head .dots i:nth-child(2){background:#ffbd2e}
+.cb-head .dots i:nth-child(3){background:#27c93f}
+.cb-head .fname{font-family:var(--mono);font-size:12.5px;color:var(--text-mute);margin-left:10px}
+.cb-head .cb-actions{display:flex;gap:8px}
+.cb-btn{font-size:12px;font-family:var(--sans);cursor:pointer;border:1px solid var(--border);
+  background:var(--bg-card);color:var(--text-dim);padding:5px 11px;border-radius:7px;transition:.15s;
+  display:inline-flex;align-items:center;gap:5px}
+.cb-btn:hover{color:#fff;border-color:var(--brand);background:rgba(91,140,255,.12)}
+.cb-btn.run{color:#bff3e2;border-color:rgba(34,211,166,.4)}
+.cb-btn.run:hover{background:rgba(34,211,166,.14);border-color:var(--accent)}
+.codeblock pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--mono);
+  font-size:13.5px;line-height:1.65;tab-size:4}
+.codeblock pre code{font-family:var(--mono)}
+.cb-output{border-top:1px dashed var(--border);background:#0a0c11;font-family:var(--mono);
+  font-size:13px;color:#cfe8dd;padding:0 18px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.cb-output.show{max-height:520px;padding:14px 18px}
+.cb-output .olabel{color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.cb-output pre{margin:0;white-space:pre-wrap;color:#dff5ea;background:none;padding:0;box-shadow:none;font-size:13px}
+.cb-output .cmt{color:var(--warn)}
+
+.tok-key{color:#ff9d6b}
+.tok-type{color:#66d9ef}
+.tok-str{color:#a3e78a}
+.tok-num{color:#c792ea}
+.tok-cmt{color:#5c6b7a;font-style:italic}
+.tok-pre{color:#f078c0}
+.tok-fn{color:#82aaff}
+.tok-punc{color:#8b93a7}
+
+.demo{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;margin:22px 0;box-shadow:var(--shadow)}
+.demo .demo-title{font-weight:700;color:#fff;font-size:15px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.demo .demo-sub{color:var(--text-mute);font-size:13px;margin:0 0 16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{cursor:pointer;border:1px solid var(--border);background:var(--bg-soft);color:var(--text-dim);
+  padding:8px 15px;border-radius:999px;font-size:13.5px;font-family:var(--mono);transition:.15s}
+.chip:hover{color:#fff;border-color:var(--brand)}
+.chip.active{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;border-color:transparent;
+  box-shadow:0 4px 14px rgba(91,140,255,.4)}
+
+.inst-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+.inst-grid .col h5{margin:0 0 8px;font-size:13px;color:var(--text-mute);text-transform:uppercase;letter-spacing:.5px}
+.inst-grid pre{margin:0;background:var(--bg-code);border:1px solid var(--border);border-radius:10px;
+  padding:14px;font-family:var(--mono);font-size:13px;overflow-x:auto;min-height:150px}
+.arrow-note{text-align:center;color:var(--accent);font-size:13px;margin:12px 0 2px}
+
+/* 数组可视化 */
+.arr-vis{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.arr-cell{min-width:40px;height:44px;border:1px solid var(--border);border-radius:8px;background:var(--bg-soft);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--mono);font-size:14px;
+  color:#dff5ea;transition:.15s;position:relative}
+.arr-cell .idx{position:absolute;top:-16px;font-size:10px;color:var(--text-mute)}
+.arr-cell.pop{animation:pop .25s ease}
+@keyframes pop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+
+.quiz{background:linear-gradient(160deg,rgba(124,92,255,.08),rgba(91,140,255,.05));
+  border:1px solid rgba(124,92,255,.3);border-radius:var(--radius);padding:22px;margin:26px 0}
+.quiz .q-tag{font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--brand-2);text-transform:uppercase}
+.quiz .q-text{font-size:16px;color:#fff;font-weight:600;margin:8px 0 16px}
+.quiz .q-text code{font-family:var(--mono);background:var(--bg-code);padding:2px 6px;border-radius:5px;color:#ffd08a;font-size:.92em}
+.q-options{display:flex;flex-direction:column;gap:10px}
+.q-opt{display:flex;align-items:flex-start;gap:11px;cursor:pointer;padding:12px 14px;border-radius:10px;
+  border:1px solid var(--border);background:var(--bg-soft);transition:.15s;font-size:14.5px}
+.q-opt:hover{border-color:var(--brand)}
+.q-opt .marker{width:22px;height:22px;border-radius:50%;border:2px solid var(--text-mute);flex:0 0 22px;
+  display:grid;place-items:center;font-size:12px;font-weight:700;transition:.15s}
+.q-opt.correct{border-color:var(--ok);background:rgba(61,220,132,.1)}
+.q-opt.correct .marker{border-color:var(--ok);background:var(--ok);color:#04140a}
+.q-opt.wrong{border-color:var(--danger);background:rgba(255,107,107,.1)}
+.q-opt.wrong .marker{border-color:var(--danger);background:var(--danger);color:#fff}
+.q-opt.disabled{cursor:default;opacity:.75}
+.q-feedback{margin-top:14px;font-size:14px;padding:12px 14px;border-radius:10px;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.4);color:#c9f7dc}
+.q-feedback.no{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.4);color:#ffd4d4}
+
+details.spoiler{border:1px solid var(--border);border-radius:12px;margin:16px 0;background:var(--bg-card);overflow:hidden}
+details.spoiler summary{cursor:pointer;padding:13px 16px;font-weight:600;color:#dfe5f2;list-style:none;
+  display:flex;align-items:center;gap:8px}
+details.spoiler summary::-webkit-details-marker{display:none}
+details.spoiler summary::before{content:"▸";color:var(--brand);transition:.15s}
+details.spoiler[open] summary::before{transform:rotate(90deg)}
+details.spoiler .sp-body{padding:0 16px 16px;border-top:1px solid var(--border)}
+details.spoiler .sp-body > :first-child{margin-top:14px}
+
+.tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;overflow:hidden;border-radius:12px}
+.tbl th,.tbl td{border:1px solid var(--border);padding:11px 14px;text-align:left;vertical-align:top}
+.tbl th{background:var(--bg-card);color:#fff;font-weight:600}
+.tbl td{background:var(--bg-soft);color:var(--text-dim)}
+.tbl td code,.tbl th code{font-family:var(--mono);color:#ffd08a;font-size:.9em}
+
+.steps{list-style:none;padding:0;margin:18px 0;counter-reset:step}
+.steps li{position:relative;padding:0 0 22px 46px;counter-increment:step}
+.steps li::before{content:counter(step);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;font-weight:700;display:grid;place-items:center;font-size:14px}
+.steps li::after{content:"";position:absolute;left:15px;top:34px;bottom:0;width:2px;background:var(--border)}
+.steps li:last-child::after{display:none}
+.steps li b{color:#fff}
+
+.finish{background:linear-gradient(150deg,rgba(34,211,166,.12),rgba(91,140,255,.08));
+  border:1px solid rgba(34,211,166,.35);border-radius:var(--radius);padding:28px;text-align:center;margin:30px 0}
+.finish h3{margin:0 0 8px}
+.finish .score{font-size:40px;font-weight:800;color:var(--accent);margin:6px 0}
+.btn-reset{margin-top:8px;cursor:pointer;border:1px solid var(--border);background:var(--bg-card);
+  color:var(--text-dim);padding:9px 18px;border-radius:9px;font-size:14px}
+.btn-reset:hover{color:#fff;border-color:var(--brand)}
+
+#menu-toggle{display:none}
+@media(max-width:960px){
+  #menu-toggle{display:inline-flex;position:fixed;top:14px;left:14px;z-index:1001;
+    width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);
+    color:#fff;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:var(--shadow)}
+  #sidebar{position:fixed;left:-330px;top:0;z-index:1000;transition:left .25s ease;box-shadow:var(--shadow)}
+  #sidebar.open{left:0}
+  #backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none}
+  #backdrop.show{display:block}
+  main{padding:0 18px 100px}
+  .hero{padding:70px 0 24px}
+  .inst-grid{grid-template-columns:1fr}
+}
+::selection{background:rgba(124,92,255,.4);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#3a4152}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<button id="menu-toggle" aria-label="菜单">☰</button>
+<div id="backdrop"></div>
+
+<div class="layout">
+  <!-- ============ 侧边栏 ============ -->
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="logo">C&lt;T&gt;</div>
+      <div>
+        <h1>C++ 类模板（下）</h1>
+        <p>第二十二课 · 引导式互动教程</p>
+      </div>
+    </div>
+    <div class="nav-progress">学习进度 <b id="nav-pct">0%</b></div>
+    <ul id="toc">
+      <li><a href="#intro"><span class="dot"></span>开始之前</a></li>
+      <li><a href="#recap"><span class="dot"></span>1 · 快速回顾：类模板</a></li>
+      <li><a href="#multi"><span class="dot"></span>2 · 多个类型参数</a></li>
+      <li><a href="#partial"><span class="dot"></span>3 · 局部特化（偏特化）</a></li>
+      <li><a href="#match"><span class="dot"></span>4 · 特化的选择规则</a></li>
+      <li><a href="#nontype"><span class="dot"></span>5 · 非类型模板参数</a></li>
+      <li><a href="#compile"><span class="dot"></span>6 · 面试题：编译期求和</a></li>
+      <li><a href="#limits"><span class="dot"></span>7 · 非类型参数的限制</a></li>
+      <li><a href="#smartptr"><span class="dot"></span>8 · 工程实战：智能指针</a></li>
+      <li><a href="#summary"><span class="dot"></span>9 · 总结与终极自测</a></li>
+    </ul>
+    <div class="sidebar-foot">
+      C++ 深度实践专题 · 专题四：模板<br/>配套源码：example22-1 ~ example22-5 · SmartPointer
+    </div>
+  </aside>
+
+  <!-- ============ 正文 ============ -->
+  <main>
+    <!-- Hero -->
+    <header class="hero" id="intro">
+      <span class="eyebrow">专题四 · 模板 · 第二十二课</span>
+      <h1>类模板（下）：偏特化、非类型参数与智能指针</h1>
+      <p class="lead">
+        上一课我们学会了"把一个类做成模板"。这一课要回答一个更深的问题：
+        <b>类模板特化之后不就变成两个类了吗？到底有什么意义？</b>
+        我们会从多类型参数出发，一路走到"让编译器替你算 1+2+…+100"，
+        最后亲手写一个麻雀虽小、五脏俱全的<b>智能指针</b>。
+      </p>
+      <div class="meta">
+        <span class="pill">🎯 面向：<b>学过类模板上半部分的同学</b></span>
+        <span class="pill">⏱ 阅读：<b>约 35 分钟</b></span>
+        <span class="pill">🧪 含：<b>可运行示例 · 互动演示 · 随堂测验</b></span>
+      </div>
+      <div class="callout tip" style="margin-top:26px">
+        <div class="ic">💡</div>
+        <div class="body">
+          <div class="t">怎么用这份教程</div>
+          点击代码块右上角的 <b>▶ 运行</b> 可以看到程序的真实输出；遇到 <b>互动演示</b> 就动手点一点；
+          每章结尾有 <b>随堂测验</b>，做完能看到你的掌握度。左侧圆点会随你的进度亮起。
+        </div>
+      </div>
+    </header>
+
+    <!-- ============ 1 回顾 ============ -->
+    <section class="chapter" id="recap">
+      <h2><span class="num">1</span>先花一分钟回顾：类模板是什么</h2>
+      <p class="sub">承上启下。别急着看新东西，先把地基踩实。</p>
+
+      <p>上一课我们把一个"只能装 int 的数组类"改造成了<strong>真正意义上的数组类</strong>——它能装任何类型。
+      做法就是在类前面加一行 <code class="inline">template&lt;typename T&gt;</code>，把写死的类型换成泛指类型 <code class="inline">T</code>：</p>
+
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">回顾：一个单类型参数的类模板</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>template&lt;typename T&gt;      // 声明一个泛指类型 T
+class Array
+{
+    T* m_data;            // 里面装的是"某种类型"T，而不是写死的 int
+    // ...
+};
+
+Array&lt;int&gt;    ai;         // 用的时候再告诉编译器 T 到底是什么
+Array&lt;double&gt; ad;</code></pre>
+      </div>
+
+      <p>上一课的结尾还提到了 <strong>类模板的特化</strong>。当时可能有同学心里犯嘀咕：</p>
+
+      <div class="callout warn">
+        <div class="ic">🤔</div>
+        <div class="body">
+          <div class="t">同学的灵魂拷问</div>
+          "一个类模板特化之后，看起来不就变成<strong>两个类</strong>了吗？这么做有什么用、有什么意义？
+          我直接再写一个新类不行吗？"
+        </div>
+      </div>
+
+      <p>这一课，我们就来正面回答这个问题。而答案，藏在接下来的四个知识点里：
+      <strong>多类型参数 → 偏特化 → 非类型参数 → 工程应用</strong>。走起。</p>
+    </section>
+
+    <!-- ============ 2 多个类型参数 ============ -->
+    <section class="chapter" id="multi">
+      <h2><span class="num">2</span>类模板可以有多个类型参数</h2>
+      <p class="sub">函数模板能做的，类模板也能做。这一点几乎"免费"。</p>
+
+      <p>学函数模板时你就见过多类型参数了。既然函数模板是模板、类模板也是模板，
+      那么<strong>类模板同样可以定义多个类型参数</strong>。语法非常自然——尖括号里用逗号隔开就行：</p>
+
+      <div class="codeblock" data-lang="cpp" data-output="18.0001">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">example22-1.cpp · 两个类型参数的类模板</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button><button class="cb-btn run">▶ 运行</button></div></div>
+<pre><code>template&lt;typename T1, typename T2&gt;   // 两个类型参数
+class Test
+{
+public:
+    void add(T1 a, T2 b)             // a 是 T1 类型，b 是 T2 类型
+    {
+        cout &lt;&lt; (a + b) &lt;&lt; endl;
+    }
+};
+
+int main()
+{
+    Test&lt;double, int&gt; t;             // T1 = double, T2 = int
+    t.add(10.0001, 8);               // double + int → double
+    return 0;
+}</code></pre>
+      </div>
+
+      <p>使用时 <code class="inline">Test&lt;double, int&gt;</code> 就把 <code class="inline">T1</code> 定成 <code class="inline">double</code>、
+      <code class="inline">T2</code> 定成 <code class="inline">int</code>。<code class="inline">10.0001 + 8</code> 的结果自然是 <code class="inline">double</code>，
+      所以打印出 <strong>18.0001</strong>，和我们的预期一致。</p>
+
+      <!-- 互动：实例化演示 -->
+      <div class="demo" id="multi-demo">
+        <div class="demo-title">🧪 互动演示：选两个类型，看编译器生成的类长什么样</div>
+        <div class="demo-sub">同一份 <code>Test&lt;T1, T2&gt;</code> 模板，你选不同的类型组合，编译器就"复制"出一个具体的类。点一点：</div>
+        <div class="chips" id="multi-chips">
+          <span class="chip active" data-t1="double" data-t2="int">Test&lt;double, int&gt;</span>
+          <span class="chip" data-t1="int" data-t2="int">Test&lt;int, int&gt;</span>
+          <span class="chip" data-t1="char" data-t2="double">Test&lt;char, double&gt;</span>
+          <span class="chip" data-t1="long" data-t2="float">Test&lt;long, float&gt;</span>
+        </div>
+        <div class="inst-grid">
+          <div class="col"><h5>你写的模板（只有一份）</h5><pre id="multi-template"></pre></div>
+          <div class="col"><h5>编译器为你生成的类</h5><pre id="multi-generated"></pre></div>
+        </div>
+        <div class="arrow-note" id="multi-note"></div>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="q-tag">随堂小测 · 多参数</div>
+        <div class="q-text">下面关于类模板的多类型参数，正确的是？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>类模板最多只能有一个类型参数</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>多个类型参数必须都是同一种类型</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>和函数模板一样，类模板也可以有多个类型参数，用逗号隔开</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ 3 偏特化 ============ -->
+    <section class="chapter" id="partial">
+      <h2><span class="num">3</span>类模板的局部特化（偏特化）</h2>
+      <p class="sub">全特化是"钉死所有类型"，偏特化是"只钉死一部分"。</p>
+
+      <p>上一课的<strong>特化</strong>（全特化）是把类型全部指定死。而这一课的<strong>局部特化 / 偏特化</strong>
+      则是"只指定一部分、剩下的仍然保持泛型"。它<strong>本身还是一个模板</strong>。</p>
+
+      <p>为什么需要它？想想 <code class="inline">Test&lt;T1, T2&gt;</code> 里的 <code class="inline">add</code>：
+      不同类型相加还好；但如果<strong>两个数是同一种类型</strong>（这在工程里反而更常见），
+      两个很大的 <code class="inline">int</code> 相加可能<strong>溢出</strong>，出于安全考虑我们想做一次强制类型转换。
+      这时候就可以"针对两个类型相同的情况"写一个偏特化：</p>
+
+      <h3>偏特化 ①：两个类型相同 <code class="inline">Test&lt;T, T&gt;</code></h3>
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">偏特化：处理"两个类型相同"的情况</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>template&lt;typename T&gt;        // 仍然是模板！但只剩一个类型参数
+class Test&lt;T, T&gt;            // 特化名后面写 &lt;T, T&gt;：两个参数一样
+{
+public:
+    void add(T a, T b)
+    {
+        cout &lt;&lt; "add(T a, T b)" &lt;&lt; endl;
+        cout &lt;&lt; static_cast&lt;T&gt;(a + b) &lt;&lt; endl;  // 相同类型：做一次强制转换更安全
+    }
+};</code></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="ic">🔑</div>
+        <div class="body">
+          注意开头仍是 <code class="inline">template&lt;typename T&gt;</code>——因为它<strong>还是一个模板</strong>；
+          而类名后面的 <code class="inline">&lt;T, T&gt;</code> 才是"局部特化"的关键：它说的是"当两个类型参数<strong>恰好一样</strong>时，用我"。
+        </div>
+      </div>
+
+      <h3>偏特化 ②：第二个参数固定为 int <code class="inline">Test&lt;T, int&gt;</code></h3>
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">偏特化：把 T2 钉死成 int</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>template&lt;typename T&gt;
+class Test&lt;T, int&gt;         // 第一个仍泛型，第二个固定为 int
+{
+public:
+    void add(T a, int b)
+    {
+        cout &lt;&lt; "add(T a, int b)" &lt;&lt; endl;
+        cout &lt;&lt; a + b &lt;&lt; endl;
+    }
+};</code></pre>
+      </div>
+
+      <h3>偏特化 ③：两个都是指针 <code class="inline">Test&lt;T1*, T2*&gt;</code></h3>
+      <p>这是偏特化最"有意义"的一种：两个<strong>指针</strong>相加是没有意义的（<code class="inline">a + b</code> 会出错），
+      所以我们为指针专门写一份，让它<strong>不做加法</strong>：</p>
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">偏特化：专门伺候指针类型</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>template&lt;typename T1, typename T2&gt;
+class Test&lt;T1*, T2*&gt;       // 两个参数都是"指针"
+{
+public:
+    void add(T1* a, T2* b)
+    {
+        cout &lt;&lt; "add(T1* a, T2* b)" &lt;&lt; endl;   // 指针不做相加，避免出错
+    }
+};</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="ic">🎯</div>
+        <div class="body">
+          <div class="t">这就回答了开头那个"灵魂拷问"</div>
+          有些类型（比如指针）<strong>不适合</strong>通用模板里定义的行为。解决办法有两种：
+          <b>①</b> 另写一个全新的类；<b>②</b> 写一个偏特化。二者本质相同，但偏特化的最大好处是——
+          使用者<strong>始终以统一的方式 <code class="inline">Test&lt;...&gt;</code></strong> 来用，
+          由编译器自动挑选合适的版本，不用记"什么时候该用哪个类"。
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4 特化选择规则 + 二义性 ============ -->
+    <section class="chapter" id="match">
+      <h2><span class="num">4</span>编译器怎么挑？——特化的选择规则</h2>
+      <p class="sub">只有一条核心规则，再加一个"选不出来就报错"的边界情况。</p>
+
+      <div class="callout info">
+        <div class="ic">📏</div>
+        <div class="body">
+          <div class="t">核心规则</div>
+          <b>编译器永远优先选择更"特殊"的版本：偏特化 &gt; 通用模板。</b>
+          如果有<strong>两个偏特化"特殊程度相当"、都能匹配</strong>，编译器<strong>无法抉择，直接报错（二义性）</strong>。
+        </div>
+      </div>
+
+      <p>现在假设通用模板 <code class="inline">Test&lt;T1,T2&gt;</code> 和三个偏特化
+      （<code class="inline">&lt;T,T&gt;</code>、<code class="inline">&lt;T,int&gt;</code>、<code class="inline">&lt;T1*,T2*&gt;</code>）同时存在，
+      我们来逐个"审判"每一种用法。动手点点看：</p>
+
+      <div class="demo" id="match-demo">
+        <div class="demo-title">🧪 互动演示：编译器会选中哪一个版本？</div>
+        <div class="demo-sub">点一个实例化写法，看看谁会被选中、为什么。红色的是会导致<strong>编译报错</strong>的二义性情况。</div>
+        <div class="chips" id="match-chips">
+          <span class="chip active" data-k="0">Test&lt;double, int&gt;</span>
+          <span class="chip" data-k="1">Test&lt;long, long&gt;</span>
+          <span class="chip" data-k="2">Test&lt;float, int&gt;</span>
+          <span class="chip" data-k="3">Test&lt;int, int&gt;</span>
+          <span class="chip" data-k="4">Test&lt;int*, int*&gt;</span>
+        </div>
+        <div id="match-result"></div>
+      </div>
+
+      <div class="callout warn">
+        <div class="ic">⚠️</div>
+        <div class="body">
+          <div class="t">两个"势均力敌"的偏特化会打架</div>
+          <code class="inline">Test&lt;int, int&gt;</code> 既满足 <code class="inline">&lt;T,T&gt;</code>（两个一样），又满足
+          <code class="inline">&lt;T,int&gt;</code>（第二个是 int）；<code class="inline">Test&lt;int*, int*&gt;</code> 既满足
+          <code class="inline">&lt;T,T&gt;</code>，又满足 <code class="inline">&lt;T1*,T2*&gt;</code>。这两种情况编译器都<strong>无法决定</strong>，会报二义性错误。
+          课堂里老师的做法是：<strong>把 <code class="inline">&lt;T,T&gt;</code> 那份注释掉</strong>，
+          把"讲台"让给专门处理指针的 <code class="inline">&lt;T1*,T2*&gt;</code>，程序就能顺利编译了。
+        </div>
+      </div>
+
+      <p>下面是<strong>去掉 <code class="inline">&lt;T,T&gt;</code> 之后</strong>能顺利编译运行的完整版本。运行它，对照输出看看每个对象各自调用了谁：</p>
+
+      <div class="codeblock" data-lang="cpp" data-output="add(T a, int b)&#10;18.0001&#10;add(T1 a, T2 b)&#10;5&#10;add(T a, int b)&#10;9&#10;add(T1* a, T2* b)">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">example22-2.cpp · 偏特化的选择（可编译版）</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button><button class="cb-btn run">▶ 运行</button></div></div>
+<pre><code>template&lt;typename T1, typename T2&gt;      // 通用模板
+class Test { public: void add(T1 a, T2 b){ cout&lt;&lt;"add(T1 a, T2 b)"&lt;&lt;endl; cout&lt;&lt;(a+b)&lt;&lt;endl; } };
+
+// template&lt;typename T&gt; class Test&lt;T, T&gt; { ... };  // ← 注释掉，避免与 &lt;T*,T*&gt; 打架
+
+template&lt;typename T&gt;                     // 偏特化：第二个是 int
+class Test&lt;T, int&gt; { public: void add(T a, int b){ cout&lt;&lt;"add(T a, int b)"&lt;&lt;endl; cout&lt;&lt;(a+b)&lt;&lt;endl; } };
+
+template&lt;typename T1, typename T2&gt;      // 偏特化：两个都是指针
+class Test&lt;T1*, T2*&gt; { public: void add(T1* a, T2* b){ cout&lt;&lt;"add(T1* a, T2* b)"&lt;&lt;endl; } };
+
+int main()
+{
+    int i = 0, j = 0;
+    Test&lt;double, int&gt; t;    // → &lt;T, int&gt;
+    Test&lt;long, long&gt;  ti;   // → 通用模板（long≠int，也不是指针）
+    Test&lt;float, int&gt;  tt;   // → &lt;T, int&gt;
+    Test&lt;int*, int*&gt;  tp;   // → &lt;T*, T*&gt;
+
+    t.add(10.0001, 8);      // 18.0001
+    ti.add(2, 3);           // 5
+    tt.add(4, 5);           // 9
+    tp.add(&amp;i, &amp;j);         // 指针版，不相加
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="q-tag">随堂小测 · 选择规则</div>
+        <div class="q-text">当 <code>Test&lt;int, int&gt;</code> 同时能匹配 <code>&lt;T,T&gt;</code> 和 <code>&lt;T,int&gt;</code> 两个偏特化时，编译器会？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>随便挑一个，程序照常运行</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>报"二义性"错误，因为两个偏特化势均力敌，无法抉择</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>回退去用通用模板</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+
+      <details class="spoiler">
+        <summary>💼 插一句工程感悟：为什么"偏特化"比"另写一个新类"更好用？</summary>
+        <div class="sp-body">
+          <p>设想你是公司里<strong>专门做底层类库</strong>的工程师。你写了一个类模板，它能处理大部分类型，
+          但对指针不行。这时如果你<strong>另写一个新类</strong>，就得在 API 文档里叮嘱同事："某某情况下请用这个新类"。
+          可惜——<strong>不是每个人都会记得、都会看文档</strong>，于是 bug 就来了。</p>
+          <p>而<strong>偏特化</strong>让使用者始终写 <code class="inline">Test&lt;...&gt;</code>，
+          编译器自动挑选实现。对外只有"一个类模板、一种用法"，用起来非常舒服。
+          写库时的<strong>用户友好度</strong>，往往决定了这套库能不能推广开——这一点在实际工程中至关重要。</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- ============ 5 非类型模板参数 ============ -->
+    <section class="chapter" id="nontype">
+      <h2><span class="num">5</span>非类型模板参数：模板还能传"数值"</h2>
+      <p class="sub">模板参数不一定是"类型"，也可以是一个具体的"数值"。</p>
+
+      <p>到目前为止，模板参数都是<strong>类型</strong>（<code class="inline">typename T</code>）。但其实模板参数
+      也可以是一个<strong>具体的数值</strong>，比如一个 <code class="inline">int</code>。看这个函数模板：</p>
+
+      <div class="codeblock" data-lang="cpp" data-output="1 2 3 4 5 &#10;1 2 3 4 5 6 7 8 9 10 ">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">example22-3.cpp · 非类型模板参数</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button><button class="cb-btn run">▶ 运行</button></div></div>
+<pre><code>template&lt;typename T, int N&gt;      // 第一个是类型参数，第二个是"数值参数" N
+void func()
+{
+    T array[N] = {0};            // 用 N 指定栈上局部数组的大小！
+
+    for(int i = 0; i &lt; N; i++)
+    {
+        array[i] = i + 1;
+        cout &lt;&lt; array[i] &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+}
+
+int main()
+{
+    func&lt;int,   5&gt;();             // 一个大小为 5  的 int   数组
+    func&lt;float, 10&gt;();            // 一个大小为 10 的 float 数组
+    return 0;
+}</code></pre>
+      </div>
+
+      <p>是不是很酷？我们用 <code class="inline">N</code> 在编译期<strong>动态指定了一个栈上局部数组的大小</strong>。
+      <code class="inline">func&lt;int, 5&gt;()</code> 得到一个 5 元素的数组，<code class="inline">func&lt;float, 10&gt;()</code> 得到 10 个。</p>
+
+      <div class="demo" id="arr-demo">
+        <div class="demo-title">🧪 互动演示：改变 N，看数组"长大"</div>
+        <div class="demo-sub">选一个 N，看看 <code>func&lt;int, N&gt;()</code> 会生成多大的数组、填进什么值：</div>
+        <div class="chips" id="arr-chips">
+          <span class="chip active" data-n="3">N = 3</span>
+          <span class="chip" data-n="5">N = 5</span>
+          <span class="chip" data-n="8">N = 8</span>
+          <span class="chip" data-n="12">N = 12</span>
+        </div>
+        <div class="arr-vis" id="arr-vis"></div>
+        <div class="arrow-note" id="arr-note"></div>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="q-tag">随堂小测 · 非类型参数</div>
+        <div class="q-text">关于 <code>template&lt;typename T, int N&gt;</code>，下列说法正确的是？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span><code>N</code> 是一个"数值参数"，可以在编译期用来指定数组大小等</span></label>
+          <label class="q-opt"><span class="marker">B</span><span><code>N</code> 必须是一个类型，比如 int、double</span></label>
+          <label class="q-opt"><span class="marker">C</span><span><code>N</code> 只能在运行时才知道具体值</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ 6 面试题 编译期求和 ============ -->
+    <section class="chapter" id="compile">
+      <h2><span class="num">6</span>一道面试题：让编译器替你算 1+2+…+N</h2>
+      <p class="sub">真实面试故事。把"非类型参数 + 特化 + 递归"三件武器合起来用。</p>
+
+      <div class="callout info">
+        <div class="ic">🎙️</div>
+        <div class="body">
+          <div class="t">题目的来历</div>
+          面试时问应聘者："用程序求 1 加到 N 的和，怎么写<strong>最快</strong>？"
+          他先说 for 循环，又改进成等差数列公式（O(1)）……但公式里有加法、还有除法，仍有运行时开销。
+          <strong>最快的答案</strong>是：让<strong>编译器在编译期就把结果算好</strong>，运行时开销为零。
+        </div>
+      </div>
+
+      <h4>预备知识：类内的静态常量</h4>
+      <p>C++ 允许在类里直接写一个 <code class="inline">static const</code> 整型常量并就地初始化。
+      因为 <code class="inline">static</code> 让它属于整个类（相当于全局），<code class="inline">const</code> 又让它进入符号表、
+      <strong>不占运行时空间</strong>——它就是一个编译期就定好的字面常量：</p>
+
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">类内静态常量：编译期就定好的值</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>class Foo
+{
+public:
+    static const int VALUE = 1;   // 只有 static const 整型能这样就地赋"字面常量"
+};</code></pre>
+      </div>
+
+      <h4>把它做成模板 + 用递归思想拆解</h4>
+      <p>求 1 加到 N，等于"1 加到 (N-1) 的和" 再加 N。这就是<strong>递归</strong>：
+      <code class="inline">Sum&lt;N&gt;::VALUE = Sum&lt;N-1&gt;::VALUE + N</code>。
+      递归必须有终点，所以再写一个 <strong>全特化 <code class="inline">Sum&lt;1&gt;</code></strong> 告诉编译器"到 1 就停，值就是 1"：</p>
+
+      <div class="codeblock" data-lang="cpp" data-output="55&#10;5050">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">example22-4.cpp · 编译期递归求和</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button><button class="cb-btn run">▶ 运行</button></div></div>
+<pre><code>template&lt;int N&gt;                 // 非类型参数 N
+class Sum
+{
+public:
+    static const int VALUE = Sum&lt;N - 1&gt;::VALUE + N;   // 递归：依赖 Sum&lt;N-1&gt;
+};
+
+template&lt;&gt;                      // 全特化：递归的终点
+class Sum&lt;1&gt;
+{
+public:
+    static const int VALUE = 1;                       // Sum&lt;1&gt; 就是 1，停止递归
+};
+
+int main()
+{
+    cout &lt;&lt; Sum&lt;10&gt;::VALUE  &lt;&lt; endl;   // 55
+    cout &lt;&lt; Sum&lt;100&gt;::VALUE &lt;&lt; endl;   // 5050
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="callout danger">
+        <div class="ic">🚫</div>
+        <div class="body">
+          <div class="t">没有 Sum&lt;1&gt; 这个特化会怎样？</div>
+          递归会一路 <code class="inline">Sum&lt;1&gt; → Sum&lt;0&gt; → Sum&lt;-1&gt;…</code> <strong>永不停止</strong>，编译器直接报错。
+          所以：<strong>编译期递归必须有一个特化来收尾</strong>。
+        </div>
+      </div>
+
+      <div class="demo" id="sum-demo">
+        <div class="demo-title">🧪 互动演示：看编译器如何"递归展开" Sum&lt;N&gt;</div>
+        <div class="demo-sub">选一个 N，看看编译期是怎样一层层展开、最后落到 <code>Sum&lt;1&gt;</code> 的特化上的：</div>
+        <div class="chips" id="sum-chips">
+          <span class="chip active" data-n="3">Sum&lt;3&gt;</span>
+          <span class="chip" data-n="5">Sum&lt;5&gt;</span>
+          <span class="chip" data-n="10">Sum&lt;10&gt;</span>
+          <span class="chip" data-n="100">Sum&lt;100&gt;</span>
+        </div>
+        <pre id="sum-out" style="background:var(--bg-code);border:1px solid var(--border);border-radius:10px;padding:14px;font-family:var(--mono);font-size:13px;overflow-x:auto"></pre>
+        <div class="arrow-note" id="sum-note"></div>
+      </div>
+
+      <div class="callout tip">
+        <div class="ic">⚡</div>
+        <div class="body">
+          <div class="t">为什么这是"最快"的？</div>
+          <code class="inline">Sum&lt;100&gt;::VALUE</code> 这个 5050 是<strong>编译器在编译时算好并写进符号表</strong>的。
+          程序运行时只是<strong>读取一个常量</strong>——没有函数调用、没有加减乘除、零计算开销。
+          这就是"让编译器替我们干活"的威力，在嵌入式等对效率敏感的场景很有用。
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 7 非类型参数的限制 ============ -->
+    <section class="chapter" id="limits">
+      <h2><span class="num">7</span>非类型模板参数的限制</h2>
+      <p class="sub">强大，但有边界。记住几条即可。</p>
+
+      <ul>
+        <li><strong>变量不能作模板参数。</strong>模板参数必须是<strong>编译期常量表达式</strong>，
+        像 <code class="inline">int n = 5; func&lt;int, n&gt;()</code> 这样用变量 <code class="inline">n</code> 会报错——
+        "n 不是常量表达式"。前面例子里我们写的都是字面常量 <code class="inline">5</code>、<code class="inline">10</code>。</li>
+        <li><strong>浮点数、类对象、全局指针一般不能作模板参数。</strong>这更多是<strong>历史原因</strong>；
+        实践中，<strong>用整型（int）做非类型参数是最安全、最可靠</strong>的选择。</li>
+        <li><strong>推导发生在编译期。</strong>正因为在编译期完成，运行时才没有开销；
+        也正因为如此，<strong>递归必须靠特化来收尾</strong>，否则编译器推导永远停不下来、直接报错。</li>
+      </ul>
+
+      <div class="callout warn">
+        <div class="ic">📌</div>
+        <div class="body">
+          <div class="t">一句话记住</div>
+          非类型模板参数 = <strong>编译期就要确定的常量</strong>。首选 <code class="inline">int</code>，
+          用变量必报错，递归要有特化终点。
+        </div>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="q-tag">随堂小测 · 限制</div>
+        <div class="q-text">下面哪种做法<strong>会导致编译错误</strong>？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span><code>func&lt;int, 5&gt;();</code></span></label>
+          <label class="q-opt"><span class="marker">B</span><span><code>func&lt;double, 10&gt;();</code></span></label>
+          <label class="q-opt"><span class="marker">C</span><span><code>int n = 5; func&lt;int, n&gt;();</code>（用变量 n 作模板参数）</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ 8 智能指针 ============ -->
+    <section class="chapter" id="smartptr">
+      <h2><span class="num">8</span>工程实战：手写一个智能指针</h2>
+      <p class="sub">把类、模板、构造/析构、运算符重载全部串起来的综合应用。</p>
+
+      <div class="callout info">
+        <div class="ic">🐛</div>
+        <div class="body">
+          <div class="t">工程里最怕什么？内存 bug</div>
+          经验之谈：实际工程里约 <strong>90% 的 bug 都和内存误操作相关</strong>，主要三类：
+          <b>①内存泄漏</b>（new 了没 delete）、<b>②多次释放</b>（delete 两次以上）、
+          <b>③越界</b>（申请 10 字节却用了 20）。越界一般用<strong>数组类</strong>（重载 <code class="inline">[]</code> 检查下标）解决；
+          泄漏与多次释放，则交给<strong>智能指针</strong>。
+        </div>
+      </div>
+
+      <h3>智能指针的设计思路</h3>
+      <p>智能指针本身是一个<strong>类模板</strong>，核心思想是<strong>用对象的生命周期来管理堆内存</strong>：</p>
+      <ol class="steps">
+        <li><b>接管堆内存：</b>通过<strong>构造函数</strong>拿到并保存那块 new 出来的堆内存指针。</li>
+        <li><b>自动释放：</b>通过<strong>析构函数</strong> delete 掉它——对象一销毁，内存就还回去，杜绝泄漏。</li>
+        <li><b>用起来像指针：</b>重载 <code class="inline">operator*</code> 和 <code class="inline">operator-&gt;</code>，模拟指针的解引用与成员访问。</li>
+      </ol>
+
+      <h3>声明：SmartPointer.h</h3>
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">SmartPointer.h · 类模板的声明</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>#ifndef _SMARTPOINTER_H_
+#define _SMARTPOINTER_H_
+
+template&lt;typename T&gt;
+class SmartPointer
+{
+protected:
+    T* m_pointer;                       // 被托管的堆内存指针
+public:
+    SmartPointer();                     // 无参：默认指向空，安全
+    SmartPointer(const T* pointer);     // 接管一块堆内存
+    ~SmartPointer();                    // 析构时自动释放
+    T* operator-&gt;();                    // 模拟 ->（成员访问）
+    T&amp; operator*();                     // 模拟 * （解引用）
+};
+
+#endif</code></pre>
+      </div>
+
+      <h3>实现：SmartPointer.hpp</h3>
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">SmartPointer.hpp · 类模板的实现</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>#ifndef _SMARTPOINTER_DEF_H_
+#define _SMARTPOINTER_DEF_H_
+
+#include "SmartPointer.h"
+
+template&lt;typename T&gt;
+SmartPointer&lt;T&gt;::SmartPointer()
+{
+    m_pointer = NULL;                   // 默认空，避免野指针
+}
+
+template&lt;typename T&gt;
+SmartPointer&lt;T&gt;::SmartPointer(const T* pointer)
+{
+    m_pointer = const_cast&lt;T*&gt;(pointer);  // 接管这块堆内存（去掉 const）
+}
+
+template&lt;typename T&gt;
+SmartPointer&lt;T&gt;::~SmartPointer()
+{
+    delete m_pointer;                   // 关键：析构时自动释放
+}
+
+template&lt;typename T&gt;
+T* SmartPointer&lt;T&gt;::operator-&gt;()
+{
+    return m_pointer;                   // p-&gt;member 等价于 m_pointer-&gt;member
+}
+
+template&lt;typename T&gt;
+T&amp; SmartPointer&lt;T&gt;::operator*()
+{
+    return *m_pointer;                  // *p 等价于 *m_pointer
+}
+
+#endif</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="ic">📁</div>
+        <div class="body">
+          <div class="t">为什么模板的实现放在 .hpp？</div>
+          模板的完整定义必须对使用它的地方"可见"，因此通常把声明与实现都放进头文件
+          （这里用 <code class="inline">.h</code> + <code class="inline">.hpp</code> 拆开只是组织习惯），
+          使用者 <code class="inline">#include "SmartPointer.hpp"</code> 即可。
+        </div>
+      </div>
+
+      <h3>用起来：和普通指针几乎一模一样</h3>
+      <div class="codeblock" data-lang="cpp" data-output="5&#10;10&#10;20">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">example22-5.cpp · 使用智能指针</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button><button class="cb-btn run">▶ 运行</button></div></div>
+<pre><code>#include "SmartPointer.hpp"
+
+class Test { public: int i; void print(){ cout &lt;&lt; i &lt;&lt; endl; } };
+
+int main()
+{
+    SmartPointer&lt;int&gt;  pi = new int(5);     // 像指针一样"指向"堆上的 int
+    SmartPointer&lt;Test&gt; pt = new Test();     // 指向堆上的 Test 对象
+
+    cout &lt;&lt; *pi &lt;&lt; endl;     // 5   —— 重载 * 解引用
+    *pi = 10;
+    cout &lt;&lt; *pi &lt;&lt; endl;     // 10
+
+    pt-&gt;i = 20;             // 重载 -> 访问成员
+    pt-&gt;print();            // 20
+
+    return 0;               // 注意：这里没有 delete，却不会泄漏！
+}</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="ic">✅</div>
+        <div class="body">
+          <div class="t">没写 delete，为什么不会泄漏？</div>
+          <code class="inline">pi</code> 和 <code class="inline">pt</code> 是<strong>栈上的对象</strong>，
+          <code class="inline">main</code> 结束时它们的<strong>析构函数会被自动调用</strong>，
+          析构函数里 <code class="inline">delete m_pointer;</code> 就把托管的堆内存释放了。
+          用它，就"最大限度地"避免了内存泄漏和多次释放——这就是智能指针的价值。
+        </div>
+      </div>
+
+      <div class="callout info">
+        <div class="ic">🏋️</div>
+        <div class="body">
+          <div class="t">课后练习</div>
+          在这个 <code class="inline">SmartPointer</code> 基础上继续<strong>重载 <code class="inline">==</code> 和 <code class="inline">!=</code></strong>
+          来模拟指针的比较，让它越来越接近一个真正可用的智能指针。
+        </div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="q-tag">随堂小测 · 智能指针</div>
+        <div class="q-text">智能指针是靠什么机制"自动释放"堆内存的？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>靠使用者记得手动调用一个 free() 方法</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>靠对象销毁时自动调用的<strong>析构函数</strong>里的 delete</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>靠操作系统定期扫描并回收</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ 9 总结 ============ -->
+    <section class="chapter" id="summary">
+      <h2><span class="num">9</span>总结与终极自测</h2>
+      <p class="sub">把这一课的收获串成一条线。</p>
+
+      <table class="tbl">
+        <tr><th>要点</th><th>一句话记住</th></tr>
+        <tr><td>多类型参数</td><td>类模板和函数模板一样，可以有多个类型参数：<code>Test&lt;T1, T2&gt;</code>。</td></tr>
+        <tr><td>偏特化</td><td>只钉死一部分类型（如 <code>&lt;T,T&gt;</code>、<code>&lt;T,int&gt;</code>、<code>&lt;T*,T*&gt;</code>），<strong>它本身还是模板</strong>。</td></tr>
+        <tr><td>选择规则</td><td>编译器<strong>优先选更特殊的偏特化</strong>；两个偏特化势均力敌则报<strong>二义性</strong>。</td></tr>
+        <tr><td>偏特化的意义</td><td>让使用者<strong>统一以一种方式</strong>使用，由编译器自动挑实现——比另写新类更友好。</td></tr>
+        <tr><td>非类型参数</td><td>模板参数也能是<strong>数值</strong>（如 <code>int N</code>），首选整型，必须是编译期常量。</td></tr>
+        <tr><td>编译期计算</td><td>"非类型参数 + 特化 + 递归"可让编译器<strong>在编译期算好结果</strong>，运行时零开销。</td></tr>
+        <tr><td>工程应用</td><td>数组类防越界、智能指针防泄漏/多次释放——它们都是<strong>类模板</strong>。</td></tr>
+      </table>
+
+      <h3>🏁 终极自测（4 题）</h3>
+      <div class="quiz" data-answer="2">
+        <div class="q-tag">终极自测 · 1/4</div>
+        <div class="q-text">下面哪一个是"局部特化（偏特化）"的正确写法？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span><code>template&lt;&gt; class Test&lt;int, int&gt; { ... };</code></span></label>
+          <label class="q-opt"><span class="marker">B</span><span><code>class Test&lt;T, T&gt; { ... };</code>（前面不写 template）</span></label>
+          <label class="q-opt"><span class="marker">C</span><span><code>template&lt;typename T&gt; class Test&lt;T, T&gt; { ... };</code></span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="q-tag">终极自测 · 2/4</div>
+        <div class="q-text">通用模板与偏特化同时存在、且某用法能匹配偏特化时，编译器会？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>永远用通用模板</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>优先选更特殊的偏特化</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>随机选一个</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="q-tag">终极自测 · 3/4</div>
+        <div class="q-text"><code>Sum&lt;100&gt;::VALUE</code> 这个 5050 是什么时候算出来的？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>编译期算好写进符号表，运行时零计算开销</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>运行时用 for 循环累加出来的</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>每次访问 VALUE 时重新用公式算一遍</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="q-tag">终极自测 · 4/4</div>
+        <div class="q-text">智能指针 <code>SmartPointer&lt;T&gt;</code> 主要解决的问题是？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>让程序跑得更快</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>用对象生命周期自动管理堆内存，避免泄漏与多次释放</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>让数组访问不再越界</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+
+      <div class="finish" id="finish-card">
+        <h3>你的掌握度</h3>
+        <div class="score"><span id="score-num">0</span> / <span id="score-total">0</span></div>
+        <p id="score-msg" style="color:var(--text-dim);margin:6px 0 0">完成上面所有终极自测题，这里会显示你的成绩 👆</p>
+        <button class="btn-reset" id="btn-reset">🔄 重做所有测验</button>
+      </div>
+
+      <div class="callout info" style="margin-top:30px">
+        <div class="ic">📎</div>
+        <div class="body">
+          <div class="t">配套源码</div>
+          本教程对应目录下的 <code class="inline">example22-1.cpp</code> ~ <code class="inline">example22-5.cpp</code>，
+          以及 <code class="inline">SmartPointer.h</code> / <code class="inline">SmartPointer.hpp</code>。
+          强烈建议亲手编译运行：<code class="inline">g++ -std=c++11 example22-4.cpp -o sum</code>，
+          再用 <code class="inline">g++ -S</code> 看看 <code class="inline">Sum&lt;100&gt;</code> 是不是真的变成了一个常量 5050。
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   1. 轻量级 C++ 语法高亮（离线可用，无外部依赖）
+   ============================================================ */
+(function highlightAll(){
+  const KEY = new Set(("template typename class struct return for while if else do switch case break continue "+
+    "void int float double char bool short long unsigned signed const static namespace using new delete "+
+    "public private protected virtual this true false nullptr NULL enum sizeof static_cast reinterpret_cast "+
+    "const_cast dynamic_cast include define ifndef endif endl std cout cin").split(" "));
+  const TYPE = new Set("int float double char bool void short long unsigned signed size_t Test Sum SmartPointer Foo Array T T1 T2 N".split(" "));
+
+  function highlight(raw){
+    let out = ""; let i = 0; const s = raw; const n = s.length;
+    function readEntity(){ let j = s.indexOf(";", i); if(j!==-1 && j-i<8){ const e=s.slice(i,j+1); i=j+1; return e; } return null; }
+    while(i<n){
+      const c = s[i];
+      if(c==='&'){ const e=readEntity(); if(e){ out+="<span class='tok-punc'>"+e+"</span>"; continue; } out+='&'; i++; continue; }
+      if(c==='#' && (i===0 || s[i-1]==='\n')){ let j=i; while(j<n && s[j]!=='\n') j++; out+="<span class='tok-pre'>"+s.slice(i,j)+"</span>"; i=j; continue; }
+      if(c==='/' && s[i+1]==='/'){ let j=i; while(j<n && s[j]!=='\n') j++; out+="<span class='tok-cmt'>"+s.slice(i,j)+"</span>"; i=j; continue; }
+      if(c==='/' && s[i+1]==='*'){ let j=i+2; while(j<n && !(s[j]==='*'&&s[j+1]==='/')) j++; j=Math.min(n,j+2); out+="<span class='tok-cmt'>"+s.slice(i,j)+"</span>"; i=j; continue; }
+      if(c==='"' || c==="'"){ const q=c; let j=i+1; let buf=c; while(j<n){ if(s[j]==='\\'){buf+=s[j]+ (s[j+1]||''); j+=2; continue;} buf+=s[j]; if(s[j]===q){j++;break;} j++; } out+="<span class='tok-str'>"+buf+"</span>"; i=j; continue; }
+      if(/[0-9]/.test(c) && !/[A-Za-z_]/.test(s[i-1]||'')){ let j=i; while(j<n && /[0-9.eEfFuUlLxX]/.test(s[j])) j++; out+="<span class='tok-num'>"+s.slice(i,j)+"</span>"; i=j; continue; }
+      if(/[A-Za-z_]/.test(c)){
+        let j=i; while(j<n && /[A-Za-z0-9_]/.test(s[j])) j++;
+        const w=s.slice(i,j); let k=j; while(k<n && s[k]===' ') k++;
+        if(KEY.has(w)) out+="<span class='tok-key'>"+w+"</span>";
+        else if(TYPE.has(w)) out+="<span class='tok-type'>"+w+"</span>";
+        else if(s[k]==='(') out+="<span class='tok-fn'>"+w+"</span>";
+        else out+=w;
+        i=j; continue;
+      }
+      out+=c; i++;
+    }
+    return out;
+  }
+  document.querySelectorAll('.codeblock[data-lang="cpp"] pre code').forEach(el=>{ el.innerHTML = highlight(el.innerHTML); });
+  window.__hl = highlight;
+})();
+
+/* ============================================================
+   2. 复制 & 运行 按钮
+   ============================================================ */
+document.querySelectorAll('.codeblock').forEach(block=>{
+  const codeEl = block.querySelector('pre code');
+  const copyBtn = block.querySelector('.cb-btn.copy');
+  if(copyBtn){
+    copyBtn.addEventListener('click',()=>{
+      const txt = codeEl.innerText;
+      navigator.clipboard?.writeText(txt).then(()=>{
+        const old=copyBtn.innerHTML; copyBtn.innerHTML="✅ 已复制";
+        setTimeout(()=>copyBtn.innerHTML=old,1400);
+      }).catch(()=>{ copyBtn.innerHTML="⚠️ 复制失败"; });
+    });
+  }
+  const runBtn = block.querySelector('.cb-btn.run');
+  if(runBtn){
+    const out = document.createElement('div');
+    out.className='cb-output';
+    const outText = block.getAttribute('data-output')||'(无输出)';
+    out.innerHTML = "<div class='olabel'>▶ 程序真实输出</div><pre></pre>";
+    block.appendChild(out);
+    const pre = out.querySelector('pre');
+    runBtn.addEventListener('click',()=>{
+      if(out.classList.contains('show')){ out.classList.remove('show'); runBtn.innerHTML="▶ 运行"; return; }
+      runBtn.innerHTML="⏳ 编译中…"; pre.textContent=""; out.classList.add('show');
+      setTimeout(()=>{
+        const lines = outText.split('\n'); let idx=0;
+        (function typeLine(){
+          if(idx>=lines.length){ runBtn.innerHTML="✅ 已运行"; return; }
+          pre.appendChild(document.createTextNode(lines[idx]+"\n"));
+          idx++; setTimeout(typeLine, 150);
+        })();
+      },420);
+    });
+  }
+});
+
+/* ============================================================
+   3. 多类型参数实例化演示
+   ============================================================ */
+(function multiDemo(){
+  const chips = document.getElementById('multi-chips');
+  const tEl = document.getElementById('multi-template');
+  const gEl = document.getElementById('multi-generated');
+  const note = document.getElementById('multi-note');
+  if(!chips) return;
+  const tpl =
+`template<typename T1, typename T2>
+class Test
+{
+public:
+    void add(T1 a, T2 b)
+    {
+        cout << (a + b) << endl;
+    }
+};`;
+  tEl.innerHTML = window.__hl(tpl.replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+  function render(t1,t2){
+    const gen =
+`class Test  // T1=${t1}, T2=${t2}
+{
+public:
+    void add(${t1} a, ${t2} b)
+    {
+        cout << (a + b) << endl;
+    }
+};`;
+    gEl.innerHTML = window.__hl(gen.replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+    note.textContent = `↑ 把 T1 换成 ${t1}、T2 换成 ${t2}，就得到一个专门处理 (${t1}, ${t2}) 的类`;
+  }
+  render('double','int');
+  chips.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      chips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active'); render(chip.dataset.t1, chip.dataset.t2);
+    });
+  });
+})();
+
+/* ============================================================
+   4. 偏特化选择演示
+   ============================================================ */
+(function matchDemo(){
+  const chips = document.getElementById('match-chips');
+  const res = document.getElementById('match-result');
+  if(!chips) return;
+  const data = [
+    {pick:"偏特化 &lt;T, int&gt;", cls:"info",
+     why:"第二个参数正好是 <code>int</code>，命中 <code>&lt;T, int&gt;</code>（T=double）。它比通用模板更特殊，优先选它。"},
+    {pick:"通用模板 &lt;T1, T2&gt;", cls:"tip",
+     why:"两个都是 <code>long</code>：<code>long≠int</code> 不匹配 <code>&lt;T,int&gt;</code>，也不是指针。（若 <code>&lt;T,T&gt;</code> 被注释掉）只能落到通用模板。"},
+    {pick:"偏特化 &lt;T, int&gt;", cls:"info",
+     why:"第二个参数是 <code>int</code>，命中 <code>&lt;T, int&gt;</code>（T=float）。"},
+    {pick:"❌ 二义性 —— 编译报错", cls:"danger",
+     why:"<code>Test&lt;int,int&gt;</code> 既满足 <code>&lt;T,T&gt;</code>（两个一样），又满足 <code>&lt;T,int&gt;</code>（第二个是 int）。两个偏特化势均力敌，编译器<strong>无法抉择，报错</strong>。"},
+    {pick:"❌ 二义性 —— 编译报错", cls:"danger",
+     why:"<code>Test&lt;int*,int*&gt;</code> 既满足 <code>&lt;T,T&gt;</code>（都是 int*），又满足 <code>&lt;T1*,T2*&gt;</code>（都是指针）。两者势均力敌，编译器<strong>报错</strong>。课堂做法是注释掉 <code>&lt;T,T&gt;</code>，让指针版胜出。"}
+  ];
+  function show(k){
+    const d=data[k];
+    res.innerHTML = `<div class="callout ${d.cls}" style="margin:14px 0 0"><div class="ic">🎯</div><div class="body"><div class="t">编译器结果：${d.pick}</div>${d.why}</div></div>`;
+  }
+  show(0);
+  chips.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      chips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active'); show(+chip.dataset.k);
+    });
+  });
+})();
+
+/* ============================================================
+   5. 非类型参数：数组可视化
+   ============================================================ */
+(function arrDemo(){
+  const chips = document.getElementById('arr-chips');
+  const vis = document.getElementById('arr-vis');
+  const note = document.getElementById('arr-note');
+  if(!chips) return;
+  function render(nStr){
+    const N = +nStr; vis.innerHTML="";
+    for(let i=0;i<N;i++){
+      const cell=document.createElement('div');
+      cell.className='arr-cell pop';
+      cell.style.animationDelay=(i*35)+'ms';
+      cell.innerHTML=`<span class="idx">[${i}]</span>${i+1}`;
+      vis.appendChild(cell);
+    }
+    note.textContent = `↑ func<int, ${N}>() 生成了一个含 ${N} 个元素的 int 数组，填入 1..${N}`;
+  }
+  render('3');
+  chips.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      chips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active'); render(chip.dataset.n);
+    });
+  });
+})();
+
+/* ============================================================
+   6. 编译期递归展开演示
+   ============================================================ */
+(function sumDemo(){
+  const chips = document.getElementById('sum-chips');
+  const outEl = document.getElementById('sum-out');
+  const note = document.getElementById('sum-note');
+  if(!chips) return;
+  function render(nStr){
+    const N=+nStr;
+    let lines=[];
+    // 展开（大 N 时省略中间）
+    function line(k){ return `Sum<${k}>::VALUE = Sum<${k-1}>::VALUE + ${k}`; }
+    if(N<=10){
+      for(let k=N;k>=2;k--) lines.push(line(k));
+      lines.push(`Sum<1>::VALUE = 1            // ← 特化，递归到此停止`);
+    } else {
+      lines.push(line(N));
+      lines.push(line(N-1));
+      lines.push(`... （编译器一层层展开） ...`);
+      lines.push(line(2));
+      lines.push(`Sum<1>::VALUE = 1            // ← 特化，递归到此停止`);
+    }
+    const total = N*(N+1)/2;
+    lines.push(``);
+    lines.push(`最终：Sum<${N}>::VALUE = ${total}   （编译期就已算好，运行时直接读取）`);
+    outEl.innerHTML = window.__hl(lines.join('\n').replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+    note.textContent = `↑ 1+2+…+${N} = ${total}`;
+  }
+  render('3');
+  chips.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      chips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active'); render(chip.dataset.n);
+    });
+  });
+})();
+
+/* ============================================================
+   7. 测验逻辑 + 计分
+   ============================================================ */
+const quizState = new Map();
+document.querySelectorAll('.quiz').forEach((quiz)=>{
+  const answer = +quiz.dataset.answer;
+  const opts = quiz.querySelectorAll('.q-opt');
+  const fb = quiz.querySelector('.q-feedback');
+  const isFinal = quiz.querySelector('.q-tag')?.textContent.includes('终极');
+  quizState.set(quiz,{answered:false,correct:false,isFinal});
+  opts.forEach((opt, oi)=>{
+    opt.addEventListener('click',()=>{
+      const st = quizState.get(quiz);
+      if(st.answered) return;
+      st.answered=true; const correct = oi===answer; st.correct=correct;
+      opts.forEach((o,k)=>{ o.classList.add('disabled'); if(k===answer) o.classList.add('correct'); });
+      if(!correct) opt.classList.add('wrong');
+      fb.classList.add('show', correct?'ok':'no');
+      fb.innerHTML = correct ? "✅ <strong>回答正确！</strong>"
+        : "❌ <strong>再想想～</strong> 正确答案是选项 "+String.fromCharCode(65+answer)+"。";
+      updateScore();
+    });
+  });
+});
+function updateScore(){
+  let total=0, correct=0;
+  quizState.forEach(st=>{ if(st.isFinal){ total++; if(st.answered && st.correct) correct++; } });
+  const numEl=document.getElementById('score-num');
+  const totEl=document.getElementById('score-total');
+  const msgEl=document.getElementById('score-msg');
+  if(!numEl) return;
+  numEl.textContent=correct; totEl.textContent=total;
+  const answeredFinal=[...quizState.values()].filter(s=>s.isFinal&&s.answered).length;
+  if(answeredFinal<total){ msgEl.textContent=`已完成 ${answeredFinal}/${total} 道终极自测题，加油！`; }
+  else if(correct===total){ msgEl.innerHTML="🎉 满分！类模板上下两课你已彻底吃透，去挑战 STL 源码吧！"; }
+  else if(correct>=total*0.5){ msgEl.innerHTML="👍 不错！回看一下做错的章节就更稳了。"; }
+  else { msgEl.innerHTML="💪 别灰心，重点回顾《偏特化的选择规则》和《编译期求和》两章。"; }
+}
+document.getElementById('btn-reset')?.addEventListener('click',()=>{ location.reload(); });
+
+/* ============================================================
+   8. 侧边栏导航：滚动进度 + 高亮 + 完成态
+   ============================================================ */
+(function nav(){
+  const bar = document.getElementById('progress-bar');
+  const navPct = document.getElementById('nav-pct');
+  const links = [...document.querySelectorAll('#toc a')];
+  const sections = links.map(a=>document.querySelector(a.getAttribute('href')));
+  const seen = new Set();
+  function onScroll(){
+    const st = window.scrollY;
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = Math.min(100, Math.round(st/h*100));
+    bar.style.width = pct+"%"; navPct.textContent = pct+"%";
+    let activeIdx = 0;
+    sections.forEach((sec,i)=>{ if(sec && sec.getBoundingClientRect().top <= 120) activeIdx=i; });
+    links.forEach((a,i)=>{ a.classList.toggle('active', i===activeIdx); if(i<=activeIdx){ seen.add(i); } });
+    links.forEach((a,i)=>{ if(seen.has(i)&&i!==activeIdx) a.classList.add('done'); else a.classList.remove('done'); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true}); onScroll();
+  const toggle=document.getElementById('menu-toggle');
+  const sidebar=document.getElementById('sidebar');
+  const backdrop=document.getElementById('backdrop');
+  function close(){sidebar.classList.remove('open');backdrop.classList.remove('show');}
+  toggle?.addEventListener('click',()=>{sidebar.classList.toggle('open');backdrop.classList.toggle('show');});
+  backdrop?.addEventListener('click',close);
+  links.forEach(a=>a.addEventListener('click',close));
+})();
+</script>
+</body>
+</html>
