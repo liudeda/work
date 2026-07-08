@@ -1,0 +1,7 @@
+C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/build/CMakeFiles/Tutorial.dir
+C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/build/CMakeFiles/edit_cache.dir
+C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/build/CMakeFiles/rebuild_cache.dir
+C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/build/MathFunctions/CMakeFiles/MathFunctions.dir
+C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/build/MathFunctions/CMakeFiles/SqrtLibrary.dir
+C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/build/MathFunctions/CMakeFiles/edit_cache.dir
+C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/build/MathFunctions/CMakeFiles/rebuild_cache.dir

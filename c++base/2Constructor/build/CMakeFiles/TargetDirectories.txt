@@ -1,0 +1,3 @@
+C:/work/c++base/2Constructor/build/CMakeFiles/MyProject.dir
+C:/work/c++base/2Constructor/build/CMakeFiles/edit_cache.dir
+C:/work/c++base/2Constructor/build/CMakeFiles/rebuild_cache.dir

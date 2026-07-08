@@ -1,0 +1,11 @@
+{
+	"tasks": [
+		{
+			"type": "cmake",
+			"label": "CMake: 工作流",
+			"command": "workflow",
+			"problemMatcher": [],
+			"detail": "CMake 模板 工作流 任务"
+		}
+	]
+}

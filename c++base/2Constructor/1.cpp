@@ -18,7 +18,7 @@ public:
     string getName();
     void print();
     Person();
-    Person(string name);
+  explicit  Person(string name);
 private:
     string name;
 };
@@ -49,9 +49,14 @@ int main()
     // 创建对象
     Person p1;
     p1.print();
-    Person p2("zhangsan");
+    Person p2("zhangsan");// 创建对象 调用有参构造函数 设置name 
     p2.print();
     p2.setName("lisi");
     p2.print();
+    Person p3 = Person("wangwu");// 创建对象 调用有参构造函数 设置name 
+    p3.print();
+    p3.setName("zhaoliu");
+    p3.print();
+    Person p4 = Person();// 创建对象 调用无参构造函数
     return 0;
 }

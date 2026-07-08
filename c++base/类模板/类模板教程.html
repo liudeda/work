@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>C++ 类模板 · 新手引导式互动教程</title>
+<style>
+:root{
+  --bg:#0f1117;
+  --bg-soft:#161923;
+  --bg-card:#1b1f2b;
+  --bg-code:#0b0d13;
+  --border:#2a2f3d;
+  --text:#e7ebf3;
+  --text-dim:#9aa3b5;
+  --text-mute:#6b7385;
+  --brand:#5b8cff;
+  --brand-2:#7c5cff;
+  --accent:#22d3a6;
+  --warn:#ffb454;
+  --danger:#ff6b6b;
+  --ok:#3ddc84;
+  --radius:14px;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,"JetBrains Mono","Fira Code",monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:var(--sans);background:var(--bg);color:var(--text);
+  line-height:1.75;font-size:16px;-webkit-font-smoothing:antialiased;
+}
+a{color:var(--brand);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ---------- 顶部进度条 ---------- */
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0;z-index:1000;
+  background:linear-gradient(90deg,var(--brand),var(--brand-2),var(--accent));
+  transition:width .12s ease-out;box-shadow:0 0 12px rgba(91,140,255,.6)}
+
+/* ---------- 布局 ---------- */
+.layout{display:flex;max-width:1280px;margin:0 auto;gap:0}
+#sidebar{
+  position:sticky;top:0;height:100vh;width:290px;flex:0 0 290px;
+  background:var(--bg-soft);border-right:1px solid var(--border);
+  padding:24px 18px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;
+}
+#sidebar .brand{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+#sidebar .brand .logo{width:36px;height:36px;border-radius:10px;flex:0 0 36px;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  display:grid;place-items:center;font-weight:800;color:#fff;font-size:15px}
+#sidebar .brand h1{font-size:15px;margin:0;line-height:1.3}
+#sidebar .brand p{font-size:12px;margin:0;color:var(--text-mute)}
+.nav-progress{font-size:12px;color:var(--text-dim);margin:10px 2px 4px}
+.nav-progress b{color:var(--accent)}
+#toc{list-style:none;padding:0;margin:6px 0 0}
+#toc li{margin:1px 0}
+#toc a{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;
+  color:var(--text-dim);font-size:14px;transition:.15s;border:1px solid transparent}
+#toc a:hover{background:var(--bg-card);color:var(--text);text-decoration:none}
+#toc a.active{background:linear-gradient(135deg,rgba(91,140,255,.16),rgba(124,92,255,.12));
+  color:#fff;border-color:rgba(91,140,255,.35)}
+#toc a .dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex:0 0 8px;transition:.15s}
+#toc a.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+#toc a.done .dot{background:var(--ok)}
+.sidebar-foot{margin-top:auto;padding-top:14px;font-size:11px;color:var(--text-mute);border-top:1px solid var(--border)}
+
+main{flex:1;min-width:0;padding:0 clamp(20px,5vw,64px) 120px}
+.hero{padding:64px 0 30px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.hero .eyebrow{display:inline-block;font-size:13px;font-weight:600;letter-spacing:.5px;
+  color:var(--brand);background:rgba(91,140,255,.12);padding:5px 12px;border-radius:999px;margin-bottom:18px}
+.hero h1{font-size:clamp(30px,5vw,46px);line-height:1.15;margin:0 0 14px;
+  background:linear-gradient(120deg,#fff 20%,#9db6ff 60%,#b79bff);-webkit-background-clip:text;
+  background-clip:text;-webkit-text-fill-color:transparent}
+.hero p.lead{font-size:18px;color:var(--text-dim);max-width:70ch;margin:0 0 22px}
+.hero .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.pill{font-size:13px;color:var(--text-dim);background:var(--bg-card);border:1px solid var(--border);
+  padding:7px 14px;border-radius:999px}
+.pill b{color:var(--text)}
+
+section.chapter{padding:44px 0 8px;border-bottom:1px solid var(--border);scroll-margin-top:20px}
+section.chapter:last-of-type{border-bottom:none}
+.chapter > h2{font-size:27px;margin:0 0 6px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.chapter > h2 .num{font-size:15px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--brand),var(--brand-2));
+  width:34px;height:34px;border-radius:10px;display:inline-grid;place-items:center;flex:0 0 34px}
+.chapter .sub{color:var(--text-mute);font-size:14px;margin:0 0 22px 46px}
+h3{font-size:19px;margin:30px 0 10px;color:#fff}
+h4{font-size:16px;margin:22px 0 8px;color:#dfe5f2}
+p{margin:12px 0}
+ul,ol{padding-left:22px}
+li{margin:6px 0}
+strong{color:#fff}
+code.inline{font-family:var(--mono);font-size:.9em;background:var(--bg-card);
+  border:1px solid var(--border);padding:2px 6px;border-radius:6px;color:#ffd08a}
+em{color:#d7ddec;font-style:normal;border-bottom:1px dashed var(--text-mute)}
+
+/* 提示框 */
+.callout{border-radius:var(--radius);padding:16px 18px;margin:20px 0;border:1px solid var(--border);
+  background:var(--bg-card);display:flex;gap:14px;align-items:flex-start}
+.callout .ic{font-size:20px;flex:0 0 auto;line-height:1.5}
+.callout .body{flex:1}
+.callout .body > :first-child{margin-top:0}
+.callout .body > :last-child{margin-bottom:0}
+.callout.tip{border-color:rgba(34,211,166,.4);background:rgba(34,211,166,.07)}
+.callout.info{border-color:rgba(91,140,255,.4);background:rgba(91,140,255,.07)}
+.callout.warn{border-color:rgba(255,180,84,.4);background:rgba(255,180,84,.07)}
+.callout.danger{border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.07)}
+.callout .t{font-weight:700;color:#fff;margin-bottom:2px}
+
+/* 代码块 */
+.codeblock{background:var(--bg-code);border:1px solid var(--border);border-radius:var(--radius);
+  margin:18px 0;overflow:hidden;box-shadow:var(--shadow)}
+.codeblock .cb-head{display:flex;align-items:center;justify-content:space-between;
+  padding:9px 14px;background:#12141c;border-bottom:1px solid var(--border)}
+.cb-head .dots{display:flex;gap:6px}
+.cb-head .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.cb-head .dots i:nth-child(1){background:#ff5f56}
+.cb-head .dots i:nth-child(2){background:#ffbd2e}
+.cb-head .dots i:nth-child(3){background:#27c93f}
+.cb-head .fname{font-family:var(--mono);font-size:12.5px;color:var(--text-mute);margin-left:10px}
+.cb-head .cb-actions{display:flex;gap:8px}
+.cb-btn{font-size:12px;font-family:var(--sans);cursor:pointer;border:1px solid var(--border);
+  background:var(--bg-card);color:var(--text-dim);padding:5px 11px;border-radius:7px;transition:.15s;
+  display:inline-flex;align-items:center;gap:5px}
+.cb-btn:hover{color:#fff;border-color:var(--brand);background:rgba(91,140,255,.12)}
+.cb-btn.run{color:#bff3e2;border-color:rgba(34,211,166,.4)}
+.cb-btn.run:hover{background:rgba(34,211,166,.14);border-color:var(--accent)}
+.codeblock pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--mono);
+  font-size:13.5px;line-height:1.65;tab-size:4}
+.codeblock pre code{font-family:var(--mono)}
+.cb-output{border-top:1px dashed var(--border);background:#0a0c11;font-family:var(--mono);
+  font-size:13px;color:#cfe8dd;padding:0 18px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.cb-output.show{max-height:520px;padding:14px 18px;overflow-y:auto}
+.cb-output .olabel{color:var(--text-mute);font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.cb-output pre{margin:0;white-space:pre-wrap;color:#dff5ea;background:none;padding:0;box-shadow:none;font-size:13px}
+.cb-output.err{color:#ffd4d4}
+.cb-output.err pre{color:#ffc4c4}
+.cb-output .cmt{color:var(--warn)}
+
+/* 语法高亮 token */
+.tok-key{color:#ff9d6b}
+.tok-type{color:#66d9ef}
+.tok-str{color:#a3e78a}
+.tok-num{color:#c792ea}
+.tok-cmt{color:#5c6b7a;font-style:italic}
+.tok-pre{color:#f078c0}
+.tok-fn{color:#82aaff}
+.tok-punc{color:#8b93a7}
+
+/* 交互卡片 */
+.demo{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;margin:22px 0;box-shadow:var(--shadow)}
+.demo .demo-title{font-weight:700;color:#fff;font-size:15px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.demo .demo-sub{color:var(--text-mute);font-size:13px;margin:0 0 16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chip{cursor:pointer;border:1px solid var(--border);background:var(--bg-soft);color:var(--text-dim);
+  padding:8px 15px;border-radius:999px;font-size:13.5px;font-family:var(--mono);transition:.15s}
+.chip:hover{color:#fff;border-color:var(--brand)}
+.chip.active{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;border-color:transparent;
+  box-shadow:0 4px 14px rgba(91,140,255,.4)}
+
+.inst-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px}
+.inst-grid .col h5{margin:0 0 8px;font-size:13px;color:var(--text-mute);text-transform:uppercase;letter-spacing:.5px}
+.inst-grid pre{margin:0;background:var(--bg-code);border:1px solid var(--border);border-radius:10px;
+  padding:14px;font-family:var(--mono);font-size:12.5px;overflow-x:auto;min-height:150px}
+.arrow-note{text-align:center;color:var(--accent);font-size:13px;margin:12px 0 2px}
+
+/* 编译流程可视化 */
+.flow{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:16px 0}
+.flow .fcol{background:var(--bg-soft);border:1px solid var(--border);border-radius:12px;padding:16px}
+.flow .fcol h5{margin:0 0 12px;font-size:14px;color:#fff;display:flex;align-items:center;gap:8px}
+.flow .fcol h5 .tag{font-size:11px;padding:2px 8px;border-radius:999px}
+.flow .fcol.normal h5 .tag{background:rgba(34,211,166,.15);color:var(--accent)}
+.flow .fcol.tmpl h5 .tag{background:rgba(255,180,84,.15);color:var(--warn)}
+.fstep{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--border);font-size:13.5px}
+.fstep:last-child{border-bottom:none}
+.fstep .fi{width:22px;height:22px;border-radius:6px;flex:0 0 22px;display:grid;place-items:center;
+  font-size:12px;font-weight:700;color:#fff}
+.flow .normal .fi{background:var(--accent)}
+.flow .tmpl .fi{background:var(--warn);color:#3a2a00}
+.fstep .ft{color:var(--text-dim)}
+.fstep .ft b{color:#fff}
+.flow .verdict{margin-top:12px;font-size:13px;padding:9px 12px;border-radius:9px;font-weight:600}
+.flow .normal .verdict{background:rgba(34,211,166,.1);color:#c9f7dc;border:1px solid rgba(34,211,166,.35)}
+.flow .tmpl .verdict{background:rgba(255,107,107,.1);color:#ffd4d4;border:1px solid rgba(255,107,107,.35)}
+
+/* 测验 */
+.quiz{background:linear-gradient(160deg,rgba(124,92,255,.08),rgba(91,140,255,.05));
+  border:1px solid rgba(124,92,255,.3);border-radius:var(--radius);padding:22px;margin:26px 0}
+.quiz .q-tag{font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--brand-2);text-transform:uppercase}
+.quiz .q-text{font-size:16px;color:#fff;font-weight:600;margin:8px 0 16px}
+.quiz .q-text code{font-family:var(--mono);background:var(--bg-code);padding:2px 6px;border-radius:5px;color:#ffd08a;font-size:.92em}
+.q-options{display:flex;flex-direction:column;gap:10px}
+.q-opt{display:flex;align-items:flex-start;gap:11px;cursor:pointer;padding:12px 14px;border-radius:10px;
+  border:1px solid var(--border);background:var(--bg-soft);transition:.15s;font-size:14.5px}
+.q-opt:hover{border-color:var(--brand)}
+.q-opt .marker{width:22px;height:22px;border-radius:50%;border:2px solid var(--text-mute);flex:0 0 22px;
+  display:grid;place-items:center;font-size:12px;font-weight:700;transition:.15s}
+.q-opt.correct{border-color:var(--ok);background:rgba(61,220,132,.1)}
+.q-opt.correct .marker{border-color:var(--ok);background:var(--ok);color:#04140a}
+.q-opt.wrong{border-color:var(--danger);background:rgba(255,107,107,.1)}
+.q-opt.wrong .marker{border-color:var(--danger);background:var(--danger);color:#fff}
+.q-opt.disabled{cursor:default;opacity:.75}
+.q-feedback{margin-top:14px;font-size:14px;padding:12px 14px;border-radius:10px;display:none}
+.q-feedback.show{display:block}
+.q-feedback.ok{background:rgba(61,220,132,.12);border:1px solid rgba(61,220,132,.4);color:#c9f7dc}
+.q-feedback.no{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.4);color:#ffd4d4}
+
+/* 折叠 */
+details.spoiler{border:1px solid var(--border);border-radius:12px;margin:16px 0;background:var(--bg-card);overflow:hidden}
+details.spoiler summary{cursor:pointer;padding:13px 16px;font-weight:600;color:#dfe5f2;list-style:none;
+  display:flex;align-items:center;gap:8px}
+details.spoiler summary::-webkit-details-marker{display:none}
+details.spoiler summary::before{content:"▸";color:var(--brand);transition:.15s}
+details.spoiler[open] summary::before{transform:rotate(90deg)}
+details.spoiler .sp-body{padding:0 16px 16px;border-top:1px solid var(--border)}
+details.spoiler .sp-body > :first-child{margin-top:14px}
+
+/* 表格 */
+.tbl{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;overflow:hidden;border-radius:12px}
+.tbl th,.tbl td{border:1px solid var(--border);padding:11px 14px;text-align:left;vertical-align:top}
+.tbl th{background:var(--bg-card);color:#fff;font-weight:600}
+.tbl td{background:var(--bg-soft);color:var(--text-dim)}
+.tbl td code,.tbl th code{font-family:var(--mono);color:#ffd08a;font-size:.9em}
+
+/* 步骤时间线 */
+.steps{list-style:none;padding:0;margin:18px 0;counter-reset:step}
+.steps li{position:relative;padding:0 0 22px 46px;counter-increment:step}
+.steps li::before{content:counter(step);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;font-weight:700;display:grid;place-items:center;font-size:14px}
+.steps li::after{content:"";position:absolute;left:15px;top:34px;bottom:0;width:2px;background:var(--border)}
+.steps li:last-child::after{display:none}
+.steps li b{color:#fff}
+
+/* 文件树 */
+.filetree{font-family:var(--mono);font-size:13.5px;background:var(--bg-code);border:1px solid var(--border);
+  border-radius:12px;padding:16px 18px;margin:16px 0;color:var(--text-dim);line-height:2}
+.filetree .f-h{color:#82aaff}
+.filetree .f-hpp{color:var(--warn)}
+.filetree .f-cpp{color:#a3e78a}
+.filetree .cmt{color:var(--text-mute)}
+
+/* 完成卡片 */
+.finish{background:linear-gradient(150deg,rgba(34,211,166,.12),rgba(91,140,255,.08));
+  border:1px solid rgba(34,211,166,.35);border-radius:var(--radius);padding:28px;text-align:center;margin:30px 0}
+.finish h3{margin:0 0 8px}
+.finish .score{font-size:40px;font-weight:800;color:var(--accent);margin:6px 0}
+.btn-reset{margin-top:8px;cursor:pointer;border:1px solid var(--border);background:var(--bg-card);
+  color:var(--text-dim);padding:9px 18px;border-radius:9px;font-size:14px}
+.btn-reset:hover{color:#fff;border-color:var(--brand)}
+
+#menu-toggle{display:none}
+@media(max-width:960px){
+  #menu-toggle{display:inline-flex;position:fixed;top:14px;left:14px;z-index:1001;
+    width:44px;height:44px;border-radius:12px;border:1px solid var(--border);background:var(--bg-card);
+    color:#fff;align-items:center;justify-content:center;font-size:20px;cursor:pointer;box-shadow:var(--shadow)}
+  #sidebar{position:fixed;left:-320px;top:0;z-index:1000;transition:left .25s ease;box-shadow:var(--shadow)}
+  #sidebar.open{left:0}
+  #backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;display:none}
+  #backdrop.show{display:block}
+  main{padding:0 18px 100px}
+  .hero{padding:70px 0 24px}
+  .inst-grid,.flow{grid-template-columns:1fr}
+}
+::selection{background:rgba(124,92,255,.4);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#3a4152}
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<button id="menu-toggle" aria-label="菜单">☰</button>
+<div id="backdrop"></div>
+
+<div class="layout">
+  <!-- ============ 侧边栏 ============ -->
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="logo">C&lt;T&gt;</div>
+      <div>
+        <h1>C++ 类模板</h1>
+        <p>泛型的类 · 引导式互动教程</p>
+      </div>
+    </div>
+    <div class="nav-progress">学习进度 <b id="nav-pct">0%</b></div>
+    <ul id="toc">
+      <li><a href="#intro"><span class="dot"></span>开始之前</a></li>
+      <li><a href="#why"><span class="dot"></span>1 · 为什么需要类模板</a></li>
+      <li><a href="#syntax"><span class="dot"></span>2 · 类模板的语法</a></li>
+      <li><a href="#use"><span class="dot"></span>3 · 如何使用（必须显式指定）</a></li>
+      <li><a href="#compiler"><span class="dot"></span>4 · 编译器如何处理</a></li>
+      <li><a href="#split"><span class="dot"></span>5 · 工程化：声明与定义分离</a></li>
+      <li><a href="#hpp"><span class="dot"></span>6 · 拆文件为何链接失败</a></li>
+      <li><a href="#array"><span class="dot"></span>7 · 实战：升级 Array 数组类</a></li>
+      <li><a href="#lazy"><span class="dot"></span>8 · 按需实例化</a></li>
+      <li><a href="#special"><span class="dot"></span>9 · 类模板特化</a></li>
+      <li><a href="#summary"><span class="dot"></span>10 · 总结与自测</a></li>
+    </ul>
+    <div class="sidebar-foot">
+      C++ 深度实践专题 · 专题四：模板 · 第二课<br/>配套源码：example21-1 ~ 3 / Array.h / Array.hpp
+    </div>
+  </aside>
+
+  <!-- ============ 正文 ============ -->
+  <main>
+    <header class="hero" id="intro">
+      <span class="eyebrow">专题四 · 模板 · 第二课（类模板 · 上）</span>
+      <h1>类模板：让"类"也拥有泛型的力量</h1>
+      <p class="lead">
+        上一课我们把模板用在了<strong>函数</strong>上。这一课，我们把同一套思想搬到 C++ 最核心的概念——<strong>类</strong>上。
+        你将亲手把一个只能存 <code class="inline">int</code> 的数组类，升级成能装<em>任意类型</em>的通用容器，
+        并揭开一个让无数新手困惑的谜题：<strong>为什么模板类的代码，不能像普通类那样拆成 .h 和 .cpp？</strong>
+      </p>
+      <div class="meta">
+        <span class="pill">🎯 面向：<b>学完函数模板、想吃透类模板的同学</b></span>
+        <span class="pill">⏱ 阅读：<b>约 30 分钟</b></span>
+        <span class="pill">🧪 含：<b>可运行示例 · 互动演示 · 随堂测验</b></span>
+      </div>
+      <div class="callout tip" style="margin-top:26px">
+        <div class="ic">💡</div>
+        <div class="body">
+          <div class="t">怎么用这份教程</div>
+          点代码块右上角的 <b>▶ 运行</b> 看程序模拟输出；遇到 <b>互动演示</b> 就动手点一点；
+          每章结尾的 <b>随堂测验</b> 会帮你检验掌握度。左侧圆点会随进度亮起。
+        </div>
+      </div>
+      <div class="callout info">
+        <div class="ic">🔗</div>
+        <div class="body">
+          <strong>先热个身：</strong>还记得函数模板吗？<code class="inline">template&lt;typename T&gt;</code> 声明一个"泛指类型 T"，
+          编译器在你调用时按具体类型"生成"真正的函数。这一课，同样的 <code class="inline">template&lt;typename T&gt;</code>
+          会被我们写在 <strong>class 前面</strong>。语法上，几乎没有新东西。
+        </div>
+      </div>
+    </header>
+
+    <!-- ============ 1 为什么需要 ============ -->
+    <section class="chapter" id="why">
+      <h2><span class="num">1</span>为什么需要类模板？先想一个工程问题</h2>
+      <p class="sub">类本就是为了复用而生。模板能让复用更上一层楼。</p>
+
+      <p>C++ 相比 C 语言最大的进步，就是引入了<strong>面向对象</strong>，而<strong>类</strong>正是这种思想的载体。
+      学数据结构时你会发现，很大一部分类是用来<strong>存储和组织数据</strong>的——比如数组、链表。</p>
+
+      <p>现在思考一个问题：一个<strong>单链表</strong>，用来存 <code class="inline">int</code> 和用来存 <code class="inline">double</code>，
+      在<em>算法</em>上有区别吗？插入、删除、遍历的逻辑，会因为元素是整数还是小数而不同吗？</p>
+
+      <div class="callout info">
+        <div class="ic">🧩</div>
+        <div class="body">
+          <strong>答案是：没有任何区别。</strong>我们实现数据结构时，根本不关心元素到底是 <code class="inline">int</code>、
+          <code class="inline">double</code> 还是 <code class="inline">long</code>，只把它们统一看成"<strong>数据元素</strong>"。
+        </div>
+      </div>
+
+      <p>那么问题来了——做工程时，难道要为 <code class="inline">int</code> 写一套链表，为 <code class="inline">double</code> 再写一套，
+      为每一个自定义类型都各写一套？这些代码<strong>算法完全一致</strong>，毫无创造性，纯属体力活：</p>
+
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">噩梦：为每种类型复制一份</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>class IntList   { /* 一整套增删改查……只为 int   */ };
+class DoubleList{ /* 一整套增删改查……只为 double，逻辑一模一样 */ };
+class StudentList{ /* 又是一整套……为自定义类型 Student */ };
+// 类型越多，重复越多。而且每一份都要单独测试、单独维护 😫</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="ic">🚀</div>
+        <div class="body">
+          <div class="t">C++ 的答案：把模板思想用到类上</div>
+          我们完全可以创建一种"<strong>只关注功能、不关心具体数据类型</strong>"的类。写<em>一次</em>，
+          就能服务 <code class="inline">int</code>、<code class="inline">double</code> 乃至任何自定义类型。这就是 <strong>类模板</strong>。
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <div class="ic">💼</div>
+        <div class="body">
+          <div class="t">课堂上的一句大实话</div>
+          很多人加班无非两件事：<strong>工作量太多</strong> 和 <strong>bug 太多</strong>。
+          代码复用（面向对象 + 模板 + 泛型编程）正是对付"工作量多"的利器——写得越少，要测试和维护的也越少。
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2 语法 ============ -->
+    <section class="chapter" id="syntax">
+      <h2><span class="num">2</span>类模板的语法：把 template 写在 class 前面</h2>
+      <p class="sub">语法上几乎没有新东西，还是那两个老朋友：template 与 typename。</p>
+
+      <p>类模板的声明方式和函数模板<strong>如出一辙</strong>：在类的前面加一行 <code class="inline">template&lt;typename T&gt;</code>，
+      类就变成了类模板。我们以一个简单的<strong>运算类</strong>为例——它只负责两个数的加法和减法：</p>
+
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">example21-1.cpp · 一个运算类模板</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>template&lt;typename T&gt;          // ← 告诉编译器：接下来是泛型，泛指类型叫 T
+class Operator
+{
+public:
+    T add(T a, T b);          // 成员函数也能用 T
+    T minus(T a, T b);
+};</code></pre>
+      </div>
+
+      <p>逐句拆解编译器"听到"的话：</p>
+      <table class="tbl">
+        <tr><th>你写的</th><th>编译器的理解</th></tr>
+        <tr><td><code>template</code></td><td>"哦，你要声明一个<strong>模板</strong>了。"</td></tr>
+        <tr><td><code>&lt;typename T&gt;</code></td><td>"这个模板里操作的<strong>泛指类型</strong>叫 T。"</td></tr>
+        <tr><td><code>class Operator</code></td><td>"原来你想把模板思想用到<strong>类</strong>上，那我帮你做一个<strong>类模板</strong>。"</td></tr>
+      </table>
+
+      <div class="callout info">
+        <div class="ic">📝</div>
+        <div class="body">
+          除了多出 <code class="inline">template&lt;typename T&gt;</code> 这一行、把原来的具体类型替换成 <code class="inline">T</code> 之外，
+          <strong>其它一切都和普通类的写法完全一样</strong>。<code class="inline">public</code>、成员函数、成员变量……老规矩不变。
+          （<code class="inline">typename</code> 换成 <code class="inline">class</code> 也可以，名字 <code class="inline">T</code> 也能改成任何你喜欢的。）
+        </div>
+      </div>
+
+      <p>这个运算类的成员函数，我们把它写在类<em>外面</em>（工程里常这么干）。注意：因为它属于类模板，
+      每个成员函数在类外定义时，<strong>自己也要带上 <code class="inline">template&lt;typename T&gt;</code></strong>，
+      并且要用 <code class="inline">Operator&lt;T&gt;::</code> 限定它属于哪个类：</p>
+
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">类外定义成员函数</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>template&lt;typename T&gt;               // 成员函数本质上也是一个模板
+T Operator&lt;T&gt;::add(T a, T b)       // Operator&lt;T&gt;:: 限定它属于哪个类模板
+{
+    return a + b;
+}
+
+template&lt;typename T&gt;
+T Operator&lt;T&gt;::minus(T a, T b)
+{
+    return a - b;
+}</code></pre>
+      </div>
+
+      <div class="callout warn">
+        <div class="ic">⚠️</div>
+        <div class="body">
+          <div class="t">新手最爱漏的两处</div>
+          ① 每个类外成员函数前都要写 <code class="inline">template&lt;typename T&gt;</code>；
+          ② 限定符必须是 <code class="inline">Operator&lt;T&gt;::</code> 而不是 <code class="inline">Operator::</code>。
+          少了任何一处，编译器都会不认识 <code class="inline">T</code> 而报错。
+        </div>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="q-tag">随堂小测 · 语法</div>
+        <div class="q-text">在类外定义类模板 <code>Operator&lt;T&gt;</code> 的成员函数 <code>add</code>，正确的写法是？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span><code>T Operator::add(T a, T b){...}</code></span></label>
+          <label class="q-opt"><span class="marker">B</span><span><code>T Operator&lt;T&gt;::add(T a, T b){...}</code>（前面不加 template 行）</span></label>
+          <label class="q-opt"><span class="marker">C</span><span><code>template&lt;typename T&gt; T Operator&lt;T&gt;::add(T a, T b){...}</code></span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ 3 使用 ============ -->
+    <section class="chapter" id="use">
+      <h2><span class="num">3</span>如何使用它？必须"显式指定"类型</h2>
+      <p class="sub">这是类模板和函数模板一个关键的不同点。</p>
+
+      <p>函数模板有两种用法：让编译器<strong>自动推导</strong>，或者<strong>显式指定</strong>。
+      类模板呢？回忆一下——既然它们用的是同一套编译机制，是不是也能自动推导？</p>
+
+      <div class="callout danger">
+        <div class="ic">🚫</div>
+        <div class="body">
+          <div class="t">不行！类模板必须显式指定类型</div>
+          创建对象时，<strong>必须</strong>用 <code class="inline">Operator&lt;int&gt;</code> 这样把类型写清楚，编译器不会替你推导。
+        </div>
+      </div>
+
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">正确：显式指定类型来定义对象</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>Operator&lt;int&gt;    op1;   // T 变成 int，op1 专门处理 int 的加减
+Operator&lt;double&gt; op2;   // T 变成 double，op2 专门处理 double 的加减
+
+Operator op3;           // ❌ 编译错误！缺少模板参数，编译器不知道 T 是什么</code></pre>
+      </div>
+
+      <h3>为什么不能自动推导？</h3>
+      <p>假设允许 <code class="inline">Operator op1;</code> 这样写。请问——<strong>op1 是处理什么类型加减法的对象？</strong>
+      你说不出来，编译器更说不出来。定义对象时<em>还没有任何实参</em>可供推断，
+      这会带来无法消除的<strong>二义性 / 模糊性</strong>。所以 C++ 干脆规定：类模板老老实实写清类型。</p>
+
+      <div class="callout tip">
+        <div class="ic">👍</div>
+        <div class="body">
+          其实这样更好——<code class="inline">Operator&lt;int&gt; op1;</code> 一眼就知道它是干嘛的，代码清晰，便于日后维护。
+        </div>
+      </div>
+
+      <!-- 互动：实例化演示 -->
+      <div class="demo" id="inst-demo">
+        <div class="demo-title">🧪 互动演示：选一个类型，看编译器"生成"出什么类</div>
+        <div class="demo-sub">同一个类模板，指定不同的类型，编译器就生成一个不同的真实类。点一点感受一下：</div>
+        <div class="chips" id="inst-chips">
+          <span class="chip active" data-type="int">Operator&lt;int&gt;</span>
+          <span class="chip" data-type="double">Operator&lt;double&gt;</span>
+          <span class="chip" data-type="char">Operator&lt;char&gt;</span>
+        </div>
+        <div class="inst-grid">
+          <div class="col">
+            <h5>你写的类模板（只有一份）</h5>
+            <pre id="inst-template"></pre>
+          </div>
+          <div class="col">
+            <h5>编译器为你生成的真实类</h5>
+            <pre id="inst-generated"></pre>
+          </div>
+        </div>
+        <div class="arrow-note" id="inst-note"></div>
+      </div>
+
+      <h3>完整示例（配套源码 example21-1）</h3>
+      <p>把类模板、类外成员定义、以及使用组合起来。点 <b>▶ 运行</b> 看看结果：</p>
+
+      <div class="codeblock" data-lang="cpp" data-output="9
+-1
+1.31
+-1.29">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">example21-1.cpp</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button><button class="cb-btn run">▶ 运行</button></div></div>
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+template&lt;typename T&gt;
+class Operator
+{
+public:
+    T add(T a, T b);
+    T minus(T a, T b);
+};
+
+template&lt;typename T&gt;
+T Operator&lt;T&gt;::add(T a, T b)   { return a + b; }
+
+template&lt;typename T&gt;
+T Operator&lt;T&gt;::minus(T a, T b) { return a - b; }
+
+int main()
+{
+    Operator&lt;int&gt;    op1;   // 专门处理 int
+    Operator&lt;double&gt; op2;   // 专门处理 double
+
+    cout &lt;&lt; op1.add(5, 4)      &lt;&lt; endl;   // 5 + 4  = 9
+    cout &lt;&lt; op1.minus(4, 5)    &lt;&lt; endl;   // 4 - 5  = -1
+    cout &lt;&lt; op2.add(1.3, 0.01) &lt;&lt; endl;   // 1.3 + 0.01 = 1.31
+    cout &lt;&lt; op2.minus(0.01, 1.3)&lt;&lt; endl;  // 0.01 - 1.3 = -1.29
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="ic">🔎</div>
+        <div class="body">
+          <code class="inline">op1</code> 是 <code class="inline">Operator&lt;int&gt;</code>，所以 <code class="inline">op1.add(5,4)</code> 返回 <strong>int</strong>，结果是 <code class="inline">9</code>；
+          <code class="inline">op2</code> 是 <code class="inline">Operator&lt;double&gt;</code>，所以 <code class="inline">op2.minus(0.01,1.3)</code> 返回 <strong>double</strong>，结果是 <code class="inline">-1.29</code>。
+        </div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="q-tag">随堂小测 · 使用</div>
+        <div class="q-text">下面关于类模板"使用方式"的说法，正确的是？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>和函数模板一样，可以让编译器自动推导，写 <code>Operator op;</code> 即可</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>必须显式指定类型，如 <code>Operator&lt;int&gt; op;</code>，否则产生二义性、编译报错</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>类模板根本不能用来定义对象</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ 4 编译器机制 ============ -->
+    <section class="chapter" id="compiler">
+      <h2><span class="num">4</span>编译器如何处理类模板？（与函数模板一致）</h2>
+      <p class="sub">C++ 用同一套机制处理函数模板和类模板——两次编译。</p>
+
+      <p>和函数模板完全一样：编译器根据"<strong>类模板 + 你指定的具体类型</strong>"，在内部生成一个个
+      <strong>真真正正、互不相同的类</strong>。这个过程就是<strong>类模板实例化</strong>。</p>
+
+      <div class="callout info">
+        <div class="ic">🧠</div>
+        <div class="body">
+          <div class="t">类模板会被"两次编译"</div>
+          <ol style="margin:6px 0 0">
+            <li><strong>第一次</strong>——在类模板<em>定义处</em>，只对模板代码做词法/语法检查，<u>并不生成任何真实代码</u>。</li>
+            <li><strong>第二次</strong>——在你<em>用具体类型使用</em>它时，才根据模板生成真正的类，再对生成的类编译、链接。</li>
+          </ol>
+        </div>
+      </div>
+
+      <p>换句话说，全局函数模板和类模板，在 C++ 编译器眼里是<strong>同一套处理方式</strong>，没有任何区别。
+      记住"两次编译"这个结论——它是理解下一章那个"链接失败之谜"的钥匙。</p>
+
+      <div class="quiz" data-answer="0">
+        <div class="q-tag">随堂小测 · 原理</div>
+        <div class="q-text">编译器对类模板的"第一次编译"主要做什么？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>只做语法检查，不生成真实类的代码</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>立刻为所有可能的类型都生成一份代码</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>把模板翻译成运行时才解释的字节码</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ 5 声明与定义分离 ============ -->
+    <section class="chapter" id="split">
+      <h2><span class="num">5</span>工程化第一步：声明与定义分离</h2>
+      <p class="sub">课堂随手写没问题，产品代码要讲规范。</p>
+
+      <p>前面我们把成员函数写在了类外——这是工程里的好习惯：<strong>类的声明</strong>放一处，
+      <strong>成员函数的实现</strong>放另一处，结构清晰。对普通类，我们通常把声明放进 <code class="inline">.h</code>、
+      把实现放进 <code class="inline">.cpp</code>。那类模板是不是也照搬？</p>
+
+      <p>先看把声明和实现放在<strong>同一个文件</strong>里、只是分开写的形式（这一步是合法的）：</p>
+
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">声明与实现分开（同一文件内，合法）</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>// —— 声明 ——
+template&lt;typename T&gt;
+class Operator {
+public:
+    T add(T a, T b);
+    T minus(T a, T b);
+};
+
+// —— 实现（放到类外）——
+template&lt;typename T&gt;
+T Operator&lt;T&gt;::add(T a, T b)   { return a + b; }
+
+template&lt;typename T&gt;
+T Operator&lt;T&gt;::minus(T a, T b) { return a - b; }</code></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="ic">📁</div>
+        <div class="body">
+          放在同一文件里确实能得到一个合法的程序，但<strong>不利于大型产品代码的维护</strong>。
+          真正的工程会把它们拆到<em>不同文件</em>里。而一旦拆分，就会撞上一堵"看不见的墙"——下一章的主角。
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 6 链接失败之谜 ============ -->
+    <section class="chapter" id="hpp">
+      <h2><span class="num">6</span>谜题：拆成 .h + .cpp 为什么链接失败？</h2>
+      <p class="sub">这是本课最烧脑、也最有价值的知识点。搞懂它，你对模板的理解会上一个台阶。</p>
+
+      <p>按普通类的经验，我们很自然地这么拆分：<code class="inline">Array.h</code> 放类声明，
+      <code class="inline">Array.cpp</code> 放成员函数实现，<code class="inline">main.cpp</code> 里 <code class="inline">#include "Array.h"</code> 使用。
+      结果一编译——<strong>链接错误（link error）</strong>：提示那些成员函数"未定义"。明明实现就在 <code class="inline">Array.cpp</code> 里，为什么找不到？</p>
+
+      <h3>先看普通类：为什么它没问题</h3>
+      <div class="flow">
+        <div class="fcol normal">
+          <h5>普通类 <span class="tag">正常</span></h5>
+          <div class="fstep"><span class="fi">1</span><span class="ft">编译器编译整个工程的<b>每个 .cpp</b>（含 Array.cpp、main.cpp）。</span></div>
+          <div class="fstep"><span class="fi">2</span><span class="ft">编译 <b>Array.cpp</b> 时，成员函数是<b>普通函数</b>，<b>真实机器码当场生成</b>。</span></div>
+          <div class="fstep"><span class="fi">3</span><span class="ft">main.cpp 里调用这些函数 → 链接时去找那段机器码。</span></div>
+          <div class="fstep"><span class="fi">4</span><span class="ft">机器码在 Array.cpp 里早已生成 → <b>链接成功</b>。</span></div>
+          <div class="verdict">✅ 找得到代码，程序正常运行</div>
+        </div>
+        <div class="fcol tmpl">
+          <h5>类模板 <span class="tag">失败</span></h5>
+          <div class="fstep"><span class="fi">1</span><span class="ft">编译器同样编译每个 .cpp。</span></div>
+          <div class="fstep"><span class="fi">2</span><span class="ft">编译 <b>Array.cpp</b> 时发现全是模板 → 只做语法检查，<b>不生成任何代码</b>（第一次编译）。</span></div>
+          <div class="fstep"><span class="fi">3</span><span class="ft">编译 <b>main.cpp</b> 时要为 <code>Array&lt;int&gt;</code> 生成代码（第二次编译），但这里<b>只 include 了 .h</b>，看不到实现！</span></div>
+          <div class="fstep"><span class="fi">4</span><span class="ft">链接时去找 <code>Array&lt;int&gt;</code> 成员函数的机器码 → <b>哪儿都没有</b>。</span></div>
+          <div class="verdict">❌ link error：符号未定义</div>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <div class="ic">🎯</div>
+        <div class="body">
+          <div class="t">谜底</div>
+          模板的第二次编译（生成真实代码）发生在<strong>使用它的那个文件</strong>（main.cpp）里。
+          可 main.cpp 只 <code class="inline">#include "Array.h"</code>，<strong>根本看不到 Array.cpp 里的实现</strong>。
+          而 Array.cpp 自己编译时，因为没人在这里用具体类型，也<strong>没生成任何代码</strong>。
+          两头落空——于是链接器找不到符号。
+        </div>
+      </div>
+
+      <h3>解决办法：让"使用处"能看到实现</h3>
+      <p>既然问题是"使用处看不到实现"，那就想办法让它看得到。最直接的做法：
+      在使用处把<strong>实现文件一起 include 进来</strong>。</p>
+
+      <p>但直接 <code class="inline">#include "Array.cpp"</code> 会让人非常别扭——谁会去 include 一个 <code class="inline">.cpp</code>？
+      所以工程约定：把类模板的实现文件改名为 <code class="inline">.hpp</code>（表示"这是模板的实现头文件"），
+      并给它加上防重复包含的宏保护。最终形成这套经典结构：</p>
+
+      <div class="filetree">
+<span class="f-h">Array.h</span>   <span class="cmt">// 类模板的声明（含 #ifndef 保护）</span>
+<span class="f-hpp">Array.hpp</span> <span class="cmt">// 成员函数实现；内部 #include "Array.h"</span>
+<span class="f-cpp">main.cpp</span>  <span class="cmt">// 使用处：#include "Array.hpp"（不是 Array.h）</span>
+      </div>
+
+      <div class="callout info">
+        <div class="ic">🔗</div>
+        <div class="body">
+          <div class="t">include 的本质就是"文本展开"</div>
+          <code class="inline">#include</code> 会把被包含文件的<strong>全部内容原样粘贴</strong>到当前位置。
+          于是 main.cpp 里 <code class="inline">#include "Array.hpp"</code> → 展开了 hpp（含全部实现）→ hpp 里又
+          <code class="inline">#include "Array.h"</code> 展开了声明。这样一来，main.cpp 里就<strong>同时拥有了声明和实现</strong>，
+          第二次编译时自然能生成 <code class="inline">Array&lt;int&gt;</code> 的真实代码。链接成功！
+        </div>
+      </div>
+
+      <details class="spoiler">
+        <summary>为什么叫 <code>.hpp</code> 而不是继续用 <code>.cpp</code>？</summary>
+        <div class="sp-body">
+          <p>纯粹是<strong>工程约定俗成</strong>，为了让代码可读。<code class="inline">.hpp</code> 中的 <code class="inline">h</code> 表示它像头文件一样
+          <em>被别人 include</em>，<code class="inline">pp</code> 暗示里面是 C++ 实现。你的同事一看文件名就懂：
+          "哦，这是某个类模板的实现文件，是要被 include 的，不是拿去单独编译的。"
+          它本质上仍是一个头文件，所以同样需要 <code class="inline">#ifndef / #define / #endif</code> 防止重复包含。</p>
+        </div>
+      </details>
+
+      <div class="callout tip">
+        <div class="ic">🧭</div>
+        <div class="body">
+          <div class="t">三条可落地的结论</div>
+          <ol style="margin:6px 0 0">
+            <li>类模板<strong>不能</strong>像普通类那样拆成 <code class="inline">.h</code> + <code class="inline">.cpp</code> 分开编译。</li>
+            <li>正确姿势：声明放 <code class="inline">.h</code>，实现放 <code class="inline">.hpp</code>，使用处 <code class="inline">#include</code> 那个 <code class="inline">.hpp</code>。</li>
+            <li>偷懒也行：声明和实现<strong>全部写在一个 .h 里</strong>——能用，但大型项目里不易维护。</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="q-tag">随堂小测 · 核心</div>
+        <div class="q-text">把类模板拆成 <code>Array.h</code>（声明）和 <code>Array.cpp</code>（实现），main.cpp 只 include 了 <code>Array.h</code>，结果链接报错。根本原因是？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>Array.cpp 里有语法错误</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>模板要在"使用处"第二次编译才生成代码，但使用处看不到 Array.cpp 里的实现，而 Array.cpp 自己又没生成代码</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>模板类不能有成员函数</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ 7 实战 Array ============ -->
+    <section class="chapter" id="array">
+      <h2><span class="num">7</span>实战：把 Array 数组类升级为类模板</h2>
+      <p class="sub">学以致用——把一个"只能装 int"的数组，改造成"什么都能装"的通用容器。</p>
+
+      <p>我们之前写过一个不错的数组类，但它只能处理某一种固定类型，"很不爽"。现在用类模板把它升级。</p>
+
+      <h4>① <code class="inline">Array.h</code> —— 声明</h4>
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">Array.h</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>#ifndef _ARRAY_H_
+#define _ARRAY_H_
+
+template&lt;typename T&gt;              // ← 升级点：变成类模板
+class Array
+{
+private:
+    int mLength;
+    T*  mSpace;                   // 元素类型用 T，而不是写死 int
+
+public:
+    Array(int length);
+    Array(const Array&amp; obj);
+    int length();
+    ~Array();
+    T&amp; operator[](int i);         // 下标访问返回 T&amp;
+    Array&amp; operator= (const Array&amp; obj);
+    bool operator== (const Array&amp; obj);
+    bool operator!= (const Array&amp; obj);
+};
+
+#endif</code></pre>
+      </div>
+
+      <h4>② <code class="inline">Array.hpp</code> —— 实现（注意每个函数都带 template 行）</h4>
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">Array.hpp（节选）</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>#ifndef _ARRAY_DEF_H_
+#define _ARRAY_DEF_H_
+
+#include "Array.h"                // 实现文件包含声明
+
+template&lt;typename T&gt;
+Array&lt;T&gt;::Array(int length)
+{
+    if (length &lt; 0) length = 0;
+    mLength = length;
+    mSpace  = new T[mLength];      // 用 T 分配空间
+}
+
+template&lt;typename T&gt;
+int Array&lt;T&gt;::length() { return mLength; }
+
+template&lt;typename T&gt;
+Array&lt;T&gt;::~Array() { delete[] mSpace; }
+
+template&lt;typename T&gt;
+T&amp; Array&lt;T&gt;::operator[](int i) { return mSpace[i]; }
+
+// operator= / operator== / operator!= 同理，逐个加上 template&lt;typename T&gt;
+#endif</code></pre>
+      </div>
+
+      <h4>③ <code class="inline">main.cpp</code> —— 使用（include 的是 .hpp！）</h4>
+      <p>一份 <code class="inline">Array</code>，同时服务 <code class="inline">int</code> 和 <code class="inline">double</code>。点 <b>▶ 运行</b>：</p>
+
+      <div class="codeblock" data-lang="cpp" data-output="1
+2
+3
+4
+5
+0.01
+0.02
+0.03
+0.04
+0.05
+0.06
+0.07
+0.08
+0.09
+0.1">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">example21-2.cpp</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button><button class="cb-btn run">▶ 运行</button></div></div>
+<pre><code>#include &lt;iostream&gt;
+#include "Array.hpp"     // ← 关键：include 实现文件 .hpp，不是 .h
+using namespace std;
+
+int main()
+{
+    Array&lt;int&gt; ai(5);                 // 一个能装 5 个 int 的数组
+    for (int i = 0; i &lt; ai.length(); i++) ai[i] = i + 1;
+    for (int i = 0; i &lt; ai.length(); i++) cout &lt;&lt; ai[i] &lt;&lt; endl;
+
+    Array&lt;double&gt; ad(10);             // 同一套代码，装 double
+    for (int i = 0; i &lt; ad.length(); i++) ad[i] = (i + 1) / 100.0;
+    for (int i = 0; i &lt; ad.length(); i++) cout &lt;&lt; ad[i] &lt;&lt; endl;
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="ic">🎉</div>
+        <div class="body">
+          <strong>成就时刻：</strong>我们<strong>只写了一次</strong>数组类，它却能存 <code class="inline">int</code>、
+          <code class="inline">double</code>，将来还能存结构体、自定义类。这就是类模板带来的复用威力。
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <div class="ic">🛠️</div>
+        <div class="body">
+          <div class="t">动手提示</div>
+          如果你亲自编译遇到 link error，先检查两点：<strong>使用处是不是 include 的 .hpp</strong>？
+          <strong>每个类外成员函数前是不是都带了 <code class="inline">template&lt;typename T&gt;</code></strong>？
+          九成的模板链接/编译问题都出在这两处。
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 8 按需实例化 ============ -->
+    <section class="chapter" id="lazy">
+      <h2><span class="num">8</span>一个细节：只有被调用的成员函数才会被生成</h2>
+      <p class="sub">编译器很"懒"，而这种懒是一种优化。</p>
+
+      <div class="callout info">
+        <div class="ic">😴</div>
+        <div class="body">
+          <strong>只有被真正调用到的类模板成员函数，才会被编译器生成可执行代码</strong>（第二次编译）。
+          你没调用的成员函数，编译器就不为它生成代码。
+        </div>
+      </div>
+
+      <p>这不是偷工减料，而是必要的策略：一个类模板理论上能实例化出<strong>无数种</strong>类型的版本，
+      每个版本又有若干成员函数。如果不管用没用全都生成，代码会爆炸式膨胀。所以编译器选择——
+      <strong>你用哪个，我才生成哪个</strong>。</p>
+
+      <div class="callout warn">
+        <div class="ic">🔬</div>
+        <div class="body">
+          <div class="t">一个有趣的副作用</div>
+          正因为"不调用就不生成代码、也不做第二次编译"，某个成员函数即使内部藏着<em>只对特定类型才报错</em>的写法，
+          只要你从不调用它、且用的类型碰巧没触发问题，程序也能编译通过。这既是灵活性，也是隐蔽 bug 的温床——
+          记住这个知识点即可。
+        </div>
+      </div>
+
+      <div class="quiz" data-answer="2">
+        <div class="q-tag">随堂小测 · 细节</div>
+        <div class="q-text">关于"类模板成员函数的实例化"，正确的说法是？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>只要实例化了 <code>Array&lt;int&gt;</code>，它的所有成员函数都会立刻生成代码</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>成员函数在运行时才生成</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>只有被实际调用到的成员函数才会被生成可执行代码</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ 9 特化 ============ -->
+    <section class="chapter" id="special">
+      <h2><span class="num">9</span>类模板特化：给某个类型"开小灶"</h2>
+      <p class="sub">当通用模板对某种特殊类型不好使时，我们可以为它专门定制一份。</p>
+
+      <p>类模板很通用，但偶尔会遇到：某个<strong>特殊类型</strong>用通用版本处理起来不方便，甚至根本不合适。
+      这时可以针对这个类型写一份<strong>特化（specialization）</strong>版本。先看通用版：</p>
+
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">通用类模板 Test&lt;T&gt;</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>template&lt;typename T&gt;
+class Test
+{
+public:
+    T test(T v)
+    {
+        cout &lt;&lt; "T test(T v)" &lt;&lt; endl;          // 不管什么类型，都打印这句
+        cout &lt;&lt; "sizeof(T) = " &lt;&lt; sizeof(T) &lt;&lt; endl;
+        return v;
+    }
+};</code></pre>
+      </div>
+
+      <p>假设我们希望：当类型是 <code class="inline">int</code> 时，输出更直观地写成 <code class="inline">int test(int v)</code> 和
+      <code class="inline">sizeof(int)</code>。于是给 <code class="inline">int</code> 写一份<strong>特化</strong>：</p>
+
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">针对 int 的特化</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>template&lt;&gt;                 // ← 空的尖括号：告诉编译器"这是一个特化"
+class Test&lt;int&gt;            // ← 特化谁？特化 Test 在 int 时的版本
+{
+public:
+    int test(int v)
+    {
+        cout &lt;&lt; "int test(int v)" &lt;&lt; endl;
+        cout &lt;&lt; "sizeof(int) = " &lt;&lt; sizeof(int) &lt;&lt; endl;
+        return v;
+    }
+};</code></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="ic">🔑</div>
+        <div class="body">
+          <div class="t">特化的语法关键</div>
+          <code class="inline">template&lt;&gt;</code>（<strong>空尖括号</strong>）宣告"下面是一个特化"，
+          <code class="inline">Test&lt;int&gt;</code> 指明"特化的是 <code class="inline">Test</code> 在 <code class="inline">int</code> 时的版本"。
+          特化体里就可以用<strong>具体的 int</strong> 来重写实现了。
+        </div>
+      </div>
+
+      <!-- 互动：特化选择 -->
+      <div class="demo" id="spec-demo">
+        <div class="demo-title">🧪 互动演示：编译器优先选谁？</div>
+        <div class="demo-sub">给 <code>Test&lt;T&gt;</code> 传不同类型，看编译器选"通用模板"还是"int 特化"。</div>
+        <div class="chips" id="spec-chips">
+          <span class="chip active" data-type="int">Test&lt;int&gt;</span>
+          <span class="chip" data-type="double">Test&lt;double&gt;</span>
+          <span class="chip" data-type="char">Test&lt;char&gt;</span>
+        </div>
+        <div id="spec-result"></div>
+      </div>
+
+      <div class="codeblock" data-lang="cpp" data-output="int test(int v)
+sizeof(int) = 4
+1">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">example21-3.cpp · main()</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button><button class="cb-btn run">▶ 运行</button></div></div>
+<pre><code>int main()
+{
+    Test&lt;int&gt; t1;
+    cout &lt;&lt; t1.test(1) &lt;&lt; endl;   // int 有特化 → 走特化版本
+    return 0;
+}</code></pre>
+      </div>
+
+      <div class="callout tip">
+        <div class="ic">📌</div>
+        <div class="body">
+          输出是特化版的 <code class="inline">int test(int v)</code> 而不是通用版的 <code class="inline">T test(T v)</code>，
+          证明了一条重要结论：<strong>当存在匹配的特化时，编译器会优先选用特化，而不是通用模板。</strong>
+        </div>
+      </div>
+
+      <h3>特化的进阶用法：继承一个特化类</h3>
+      <p>特化在工程上很有意义——我们甚至可以<strong>继承</strong>一个特化类，开发出自己的新类。
+      而这个新类从使用者角度看，就是一个<strong>普通的类</strong>（不再是模板）：</p>
+
+      <div class="codeblock" data-lang="cpp">
+        <div class="cb-head"><div class="dots"><i></i><i></i><i></i></div><span class="fname">继承特化类</span>
+          <div class="cb-actions"><button class="cb-btn copy">📋 复制</button></div></div>
+<pre><code>class MyTest : public Test&lt;int&gt;   // 继承 int 的特化版本
+{
+    // MyTest 就是一个普通类了，天生具备 Test&lt;int&gt; 的能力
+};</code></pre>
+      </div>
+
+      <div class="callout info">
+        <div class="ic">🧱</div>
+        <div class="body">
+          虽然特化看起来简单，却是实际工作中<strong>用得很多</strong>的知识点（尤其在对 C++ 要求较高的团队）。
+          下一课我们还会讲更多特化内容，并动手实现一个<strong>智能指针</strong>。
+        </div>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="q-tag">随堂小测 · 特化</div>
+        <div class="q-text">已有通用模板 <code>Test&lt;T&gt;</code> 和特化 <code>Test&lt;int&gt;</code>。执行 <code>Test&lt;int&gt; t;</code> 时，编译器用哪一个？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>优先用 <code>Test&lt;int&gt;</code> 特化版本</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>用通用模板，把 T 换成 int</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>报错：特化和通用模板冲突</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+    </section>
+
+    <!-- ============ 10 总结 ============ -->
+    <section class="chapter" id="summary">
+      <h2><span class="num">10</span>总结与终极自测</h2>
+      <p class="sub">把这一课的收获串成一条线。</p>
+
+      <table class="tbl">
+        <tr><th>要点</th><th>一句话记住</th></tr>
+        <tr><td>本质</td><td>类模板 = 只关注功能、不关心具体数据类型的<strong>一族类</strong>，写一次可生成 N 个真实类。</td></tr>
+        <tr><td>语法</td><td>在 <code>class</code> 前加 <code>template&lt;typename T&gt;</code>；类外成员函数<strong>每个都要带</strong> template 行并用 <code>类名&lt;T&gt;::</code> 限定。</td></tr>
+        <tr><td>使用</td><td><strong>必须显式指定</strong>类型：<code>Operator&lt;int&gt; op;</code>，不能自动推导（会产生二义性）。</td></tr>
+        <tr><td>编译器</td><td>与函数模板同一套机制，<strong>两次编译</strong>：定义处查语法，使用处才生成真实代码。</td></tr>
+        <tr><td>工程化</td><td>声明放 <code>.h</code>、实现放 <code>.hpp</code>，使用处 <code>#include</code> 那个 <code>.hpp</code>；<strong>不能</strong>拆成 .h+.cpp 分开编译。</td></tr>
+        <tr><td>按需实例化</td><td>只有<strong>被调用</strong>的成员函数才会被生成代码。</td></tr>
+        <tr><td>特化</td><td><code>template&lt;&gt; class X&lt;具体类型&gt;</code> 给特殊类型定制；有特化时编译器<strong>优先用特化</strong>。</td></tr>
+      </table>
+
+      <div class="callout tip">
+        <div class="ic">🧭</div>
+        <div class="body">
+          <div class="t">下一课预告（第 22 课 · 类模板下）</div>
+          我们会继续深入类模板，讲更多<strong>特化</strong>的内容，并完整开发一个简单的
+          <strong>智能指针</strong>，理解它在 C++ 中的地位与好处。今天的基础打牢了，下一课会水到渠成。
+        </div>
+      </div>
+
+      <h3>🏁 终极自测（4 题）</h3>
+      <div class="quiz" data-answer="2">
+        <div class="q-tag">终极自测 · 1/4</div>
+        <div class="q-text">类模板要解决的核心问题是？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>让类运行得更快</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>让类的对象占用更少内存</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>消除"算法相同、仅元素类型不同"的重复类（如 IntList / DoubleList）</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="q-tag">终极自测 · 2/4</div>
+        <div class="q-text">用类模板 <code>Array&lt;T&gt;</code> 定义一个存 double 的数组，正确写法是？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span><code>Array ad(10);</code>（让编译器推导）</span></label>
+          <label class="q-opt"><span class="marker">B</span><span><code>Array&lt;double&gt; ad(10);</code></span></label>
+          <label class="q-opt"><span class="marker">C</span><span><code>Array&lt;&gt; ad(10);</code></span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+
+      <div class="quiz" data-answer="0">
+        <div class="q-tag">终极自测 · 3/4</div>
+        <div class="q-text">工程中类模板正确的文件组织方式是？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>声明放 .h、实现放 .hpp，使用处 include 那个 .hpp</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>声明放 .h、实现放 .cpp，使用处只 include .h（和普通类一样）</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>必须把所有内容塞进一个 .cpp，禁止使用头文件</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+
+      <div class="quiz" data-answer="1">
+        <div class="q-tag">终极自测 · 4/4</div>
+        <div class="q-text">存在通用模板 <code>Test&lt;T&gt;</code> 与特化 <code>Test&lt;int&gt;</code>，执行 <code>Test&lt;int&gt; t; t.test(1);</code> 会调用哪个？</div>
+        <div class="q-options">
+          <label class="q-opt"><span class="marker">A</span><span>通用模板，把 T 替换成 int</span></label>
+          <label class="q-opt"><span class="marker">B</span><span>int 特化版本——有特化时编译器优先选特化</span></label>
+          <label class="q-opt"><span class="marker">C</span><span>两个都调用一次</span></label>
+        </div>
+        <div class="q-feedback"></div>
+      </div>
+
+      <div class="finish" id="finish-card">
+        <h3>你的掌握度</h3>
+        <div class="score"><span id="score-num">0</span> / <span id="score-total">0</span></div>
+        <p id="score-msg" style="color:var(--text-dim);margin:6px 0 0">完成上面所有终极自测，这里会显示你的成绩 👆</p>
+        <button class="btn-reset" id="btn-reset">🔄 重做所有测验</button>
+      </div>
+
+      <div class="callout info" style="margin-top:30px">
+        <div class="ic">📎</div>
+        <div class="body">
+          <div class="t">配套源码</div>
+          本教程对应仓库中的 <code class="inline">example21-1.cpp</code>（运算类）、
+          <code class="inline">example21-2.cpp</code> + <code class="inline">Array.h</code> / <code class="inline">Array.hpp</code>（数组类模板）、
+          <code class="inline">example21-3.cpp</code>（特化）。强烈建议亲手编译运行，
+          再故意把 <code class="inline">Array.hpp</code> 改成 <code class="inline">Array.cpp</code> 分开编译，亲眼看看那个 <strong>link error</strong>。
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   1. 轻量级 C++ / 文本 语法高亮（离线可用，无外部依赖）
+   ============================================================ */
+(function highlightAll(){
+  const KEY = new Set(("template typename class struct return for while if else do switch case break continue "+
+    "void int float double char bool short long unsigned signed const static namespace using new delete "+
+    "public private protected virtual this true false nullptr enum sizeof static_cast reinterpret_cast "+
+    "const_cast dynamic_cast include define ifndef endif endl std cout cin").split(" "));
+  const TYPE = new Set("int float double char bool void short long unsigned signed size_t Operator Array Test MyTest T".split(" "));
+
+  function highlight(raw){
+    let out = "", i = 0;
+    const s = raw, n = s.length;
+    function readEntity(){
+      let j = s.indexOf(";", i);
+      if(j!==-1 && j-i<8){ const e=s.slice(i,j+1); i=j+1; return e; }
+      return null;
+    }
+    while(i<n){
+      const c = s[i];
+      if(c==='&'){ const e=readEntity(); if(e){ out+="<span class='tok-punc'>"+e+"</span>"; continue; } out+='&'; i++; continue; }
+      if(c==='#' && (i===0 || s[i-1]==='\n')){
+        let j=i; while(j<n && s[j]!=='\n') j++;
+        out+="<span class='tok-pre'>"+s.slice(i,j)+"</span>"; i=j; continue;
+      }
+      if(c==='/' && s[i+1]==='/'){
+        let j=i; while(j<n && s[j]!=='\n') j++;
+        out+="<span class='tok-cmt'>"+s.slice(i,j)+"</span>"; i=j; continue;
+      }
+      if(c==='"' || c==="'"){
+        const q=c; let j=i+1; let buf=c;
+        while(j<n){ if(s[j]==='\\'){buf+=s[j]+ (s[j+1]||''); j+=2; continue;} buf+=s[j]; if(s[j]===q){j++;break;} j++; }
+        out+="<span class='tok-str'>"+buf+"</span>"; i=j; continue;
+      }
+      if(/[0-9]/.test(c) && !/[A-Za-z_]/.test(s[i-1]||'')){
+        let j=i; while(j<n && /[0-9.eEfFuUlLxX]/.test(s[j])) j++;
+        out+="<span class='tok-num'>"+s.slice(i,j)+"</span>"; i=j; continue;
+      }
+      if(/[A-Za-z_]/.test(c)){
+        let j=i; while(j<n && /[A-Za-z0-9_]/.test(s[j])) j++;
+        const w=s.slice(i,j);
+        let k=j; while(k<n && s[k]===' ') k++;
+        if(KEY.has(w)) out+="<span class='tok-key'>"+w+"</span>";
+        else if(TYPE.has(w)) out+="<span class='tok-type'>"+w+"</span>";
+        else if(s[k]==='(') out+="<span class='tok-fn'>"+w+"</span>";
+        else out+=w;
+        i=j; continue;
+      }
+      out+=c; i++;
+    }
+    return out;
+  }
+  document.querySelectorAll('.codeblock[data-lang="cpp"] pre code, .codeblock[data-lang="text"] pre code')
+    .forEach(el=>{ el.innerHTML = highlight(el.innerHTML); });
+  window.__hl = highlight;
+})();
+
+/* ============================================================
+   2. 复制 & 运行 按钮
+   ============================================================ */
+document.querySelectorAll('.codeblock').forEach(block=>{
+  const codeEl = block.querySelector('pre code');
+  const copyBtn = block.querySelector('.cb-btn.copy');
+  if(copyBtn){
+    copyBtn.addEventListener('click',()=>{
+      const txt = codeEl.innerText;
+      navigator.clipboard?.writeText(txt).then(()=>{
+        const old=copyBtn.innerHTML; copyBtn.innerHTML="✅ 已复制";
+        setTimeout(()=>copyBtn.innerHTML=old,1400);
+      }).catch(()=>{ copyBtn.innerHTML="⚠️ 复制失败"; });
+    });
+  }
+  const runBtn = block.querySelector('.cb-btn.run');
+  if(runBtn){
+    const out = document.createElement('div');
+    out.className='cb-output';
+    const outText = block.getAttribute('data-output')||'(无输出)';
+    out.innerHTML = "<div class='olabel'>▶ 程序输出（模拟）</div><pre></pre>";
+    block.appendChild(out);
+    const pre = out.querySelector('pre');
+    runBtn.addEventListener('click',()=>{
+      if(out.classList.contains('show')){
+        out.classList.remove('show'); runBtn.innerHTML="▶ 运行"; return;
+      }
+      runBtn.innerHTML="⏳ 编译中…"; pre.textContent="";
+      out.classList.add('show');
+      setTimeout(()=>{
+        const lines = outText.split('\n');
+        let idx=0;
+        (function typeLine(){
+          if(idx>=lines.length){ runBtn.innerHTML="✅ 已运行"; return; }
+          const ln = lines[idx];
+          const arrow = ln.indexOf('<-');
+          if(arrow!==-1){
+            pre.innerHTML += ln.slice(0,arrow) + "<span class='cmt'>"+ln.slice(arrow)+"</span>\n";
+          } else {
+            pre.appendChild(document.createTextNode(ln+"\n"));
+          }
+          idx++; setTimeout(typeLine, 90);
+        })();
+      },380);
+    });
+  }
+});
+
+/* ============================================================
+   3. 类模板实例化互动演示
+   ============================================================ */
+(function instDemo(){
+  const chips = document.getElementById('inst-chips');
+  const tEl = document.getElementById('inst-template');
+  const gEl = document.getElementById('inst-generated');
+  const note = document.getElementById('inst-note');
+  if(!chips) return;
+  const templateCode =
+`template<typename T>
+class Operator {
+public:
+    T add(T a, T b);
+    T minus(T a, T b);
+};`;
+  tEl.innerHTML = window.__hl(templateCode.replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+  function render(type){
+    const gen =
+`class Operator_${type} {
+public:
+    ${type} add(${type} a, ${type} b);
+    ${type} minus(${type} a, ${type} b);
+};`;
+    gEl.innerHTML = window.__hl(gen.replace(/</g,'&lt;').replace(/>/g,'&gt;'));
+    note.textContent = `↑ 指定 Operator<${type}>，编译器把所有 T 替换成 ${type}，生成一个专门处理 ${type} 的真实类`;
+  }
+  render('int');
+  chips.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      chips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      render(chip.dataset.type);
+    });
+  });
+})();
+
+/* ============================================================
+   4. 特化选择互动演示
+   ============================================================ */
+(function specDemo(){
+  const chips = document.getElementById('spec-chips');
+  const res = document.getElementById('spec-result');
+  if(!chips) return;
+  const data = {
+    int:{pick:"int 特化 Test<int>", cls:"tip",
+      why:"存在专门针对 <code>int</code> 的特化版本，编译器<strong>优先选特化</strong>。输出：<code>int test(int v)</code> / <code>sizeof(int) = 4</code>。"},
+    double:{pick:"通用模板 Test<T>（T = double）", cls:"info",
+      why:"没有 <code>double</code> 的特化，退回<strong>通用模板</strong>，把 T 换成 double。输出：<code>T test(T v)</code> / <code>sizeof(T) = 8</code>。"},
+    char:{pick:"通用模板 Test<T>（T = char）", cls:"info",
+      why:"没有 <code>char</code> 的特化，退回<strong>通用模板</strong>。输出：<code>T test(T v)</code> / <code>sizeof(T) = 1</code>。"}
+  };
+  function render(type){
+    const d = data[type];
+    res.innerHTML = `<div class="callout ${d.cls}" style="margin:14px 0 0">
+      <div class="ic">🎯</div><div class="body">
+      <div class="t">编译器选择：${d.pick}</div>${d.why}</div></div>`;
+  }
+  render('int');
+  chips.querySelectorAll('.chip').forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      chips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active');
+      render(chip.dataset.type);
+    });
+  });
+})();
+
+/* ============================================================
+   5. 测验逻辑 + 计分
+   ============================================================ */
+const quizState = new Map();
+document.querySelectorAll('.quiz').forEach((quiz)=>{
+  const answer = +quiz.dataset.answer;
+  const opts = quiz.querySelectorAll('.q-opt');
+  const fb = quiz.querySelector('.q-feedback');
+  const isFinal = quiz.querySelector('.q-tag')?.textContent.includes('终极');
+  quizState.set(quiz,{answered:false,correct:false,isFinal});
+  opts.forEach((opt, oi)=>{
+    opt.addEventListener('click',()=>{
+      const st = quizState.get(quiz);
+      if(st.answered) return;
+      st.answered=true;
+      const correct = oi===answer;
+      st.correct=correct;
+      opts.forEach((o,k)=>{
+        o.classList.add('disabled');
+        if(k===answer) o.classList.add('correct');
+      });
+      if(!correct) opt.classList.add('wrong');
+      fb.classList.add('show', correct?'ok':'no');
+      fb.innerHTML = correct
+        ? "✅ <strong>回答正确！</strong>"
+        : "❌ <strong>再想想～</strong> 正确答案是选项 "+String.fromCharCode(65+answer)+"。";
+      updateScore();
+    });
+  });
+});
+
+function updateScore(){
+  let total=0, correct=0;
+  quizState.forEach(st=>{
+    if(st.isFinal){ total++; if(st.answered && st.correct) correct++; }
+  });
+  const numEl=document.getElementById('score-num');
+  const totEl=document.getElementById('score-total');
+  const msgEl=document.getElementById('score-msg');
+  if(!numEl) return;
+  numEl.textContent=correct; totEl.textContent=total;
+  const answeredFinal=[...quizState.values()].filter(s=>s.isFinal&&s.answered).length;
+  if(answeredFinal<total){
+    msgEl.textContent=`已完成 ${answeredFinal}/${total} 道终极自测题，加油！`;
+  } else if(correct===total){
+    msgEl.innerHTML="🎉 满分！你已经吃透了类模板，下一课我们一起手写智能指针！";
+  } else if(correct>=total*0.5){
+    msgEl.innerHTML="👍 不错！回看一下做错的章节就更稳了。";
+  } else {
+    msgEl.innerHTML="💪 别灰心，重点回顾《拆文件为何链接失败》和《类模板特化》两章。";
+  }
+}
+document.getElementById('btn-reset')?.addEventListener('click',()=>{ location.reload(); });
+
+/* ============================================================
+   6. 侧边栏导航：滚动进度 + 高亮 + 完成态
+   ============================================================ */
+(function nav(){
+  const bar = document.getElementById('progress-bar');
+  const navPct = document.getElementById('nav-pct');
+  const links = [...document.querySelectorAll('#toc a')];
+  const sections = links.map(a=>document.querySelector(a.getAttribute('href')));
+  const seen = new Set();
+
+  function onScroll(){
+    const st = window.scrollY;
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = Math.min(100, Math.round(st/h*100));
+    bar.style.width = pct+"%";
+    navPct.textContent = pct+"%";
+    let activeIdx = 0;
+    sections.forEach((sec,i)=>{
+      if(sec && sec.getBoundingClientRect().top <= 120) activeIdx=i;
+    });
+    links.forEach((a,i)=>{
+      a.classList.toggle('active', i===activeIdx);
+      if(i<=activeIdx){ seen.add(i); }
+    });
+    links.forEach((a,i)=>{ if(seen.has(i)&&i!==activeIdx) a.classList.add('done'); else a.classList.remove('done'); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  const toggle=document.getElementById('menu-toggle');
+  const sidebar=document.getElementById('sidebar');
+  const backdrop=document.getElementById('backdrop');
+  function close(){sidebar.classList.remove('open');backdrop.classList.remove('show');}
+  toggle?.addEventListener('click',()=>{sidebar.classList.toggle('open');backdrop.classList.toggle('show');});
+  backdrop?.addEventListener('click',close);
+  links.forEach(a=>a.addEventListener('click',close));
+})();
+</script>
+</body>
+</html>

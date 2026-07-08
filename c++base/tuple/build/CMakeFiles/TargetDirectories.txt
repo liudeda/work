@@ -1,0 +1,3 @@
+C:/work/c++base/tuple/build/CMakeFiles/MyProject.dir
+C:/work/c++base/tuple/build/CMakeFiles/edit_cache.dir
+C:/work/c++base/tuple/build/CMakeFiles/rebuild_cache.dir

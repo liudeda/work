@@ -1,0 +1,20 @@
+[
+{
+  "directory": "C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/build",
+  "command": "C:\\mingw64\\bin\\g++.exe  @CMakeFiles/Tutorial.dir/includes_CXX.rsp -g -Wall -Wextra -Wshadow -Wformat=2 -Wunused -o CMakeFiles\\Tutorial.dir\\tutorial.cxx.obj -c C:\\baidu\\BaiduSyncdisk\\cmake\\cmake\\Help\\guide\\tutorial\\Step5\\tutorial.cxx",
+  "file": "C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/tutorial.cxx",
+  "output": "CMakeFiles/Tutorial.dir/tutorial.cxx.obj"
+},
+{
+  "directory": "C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/build/MathFunctions",
+  "command": "C:\\mingw64\\bin\\g++.exe   -g -Wall -Wextra -Wshadow -Wformat=2 -Wunused -o CMakeFiles\\SqrtLibrary.dir\\mysqrt.cxx.obj -c C:\\baidu\\BaiduSyncdisk\\cmake\\cmake\\Help\\guide\\tutorial\\Step5\\MathFunctions\\mysqrt.cxx",
+  "file": "C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/MathFunctions/mysqrt.cxx",
+  "output": "MathFunctions/CMakeFiles/SqrtLibrary.dir/mysqrt.cxx.obj"
+},
+{
+  "directory": "C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/build/MathFunctions",
+  "command": "C:\\mingw64\\bin\\g++.exe -DUSE_MYMATH  -g -Wall -Wextra -Wshadow -Wformat=2 -Wunused -o CMakeFiles\\MathFunctions.dir\\MathFunctions.cxx.obj -c C:\\baidu\\BaiduSyncdisk\\cmake\\cmake\\Help\\guide\\tutorial\\Step5\\MathFunctions\\MathFunctions.cxx",
+  "file": "C:/baidu/BaiduSyncdisk/cmake/cmake/Help/guide/tutorial/Step5/MathFunctions/MathFunctions.cxx",
+  "output": "MathFunctions/CMakeFiles/MathFunctions.dir/MathFunctions.cxx.obj"
+}
+]

@@ -48,10 +48,10 @@ int main()
      int a = 1;
      int b = 2;
 
-     Operator<int, double> op;
-     Operator<double, int> op2;
-     Operator<long, long> op3;
-     Operator<int *, int *> op4;
+     Operator<int, double> op;   // 局部特化版本
+     Operator<double, int> op2;  // 局部特化版本
+     Operator<long, long> op3;   // 局部特化版本
+     Operator<int *, int *> op4; // 局部特化版本
      // 根据以下执行结果，编译器优先选择局部特化版本
      std::cout << "1: " << op.add(1, 2.3) << std::endl;  // 没有局部特化版本 选择模板版本 double add(T1 a, T2 b)
      std::cout << "2: " << op2.add(1.9, 2) << std::endl; // 局部特化版本 先择 double add(T a, int b)

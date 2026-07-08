@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/work/c++base/8函数模板/build",
+  "command": "C:\\mingw64\\bin\\g++.exe   -g -std=gnu++17 -o CMakeFiles\\MyProject.dir\\9.cpp.obj -c C:\\work\\c++base\\8函数模板\\9.cpp",
+  "file": "C:/work/c++base/8函数模板/9.cpp",
+  "output": "CMakeFiles/MyProject.dir/9.cpp.obj"
+}
+]
